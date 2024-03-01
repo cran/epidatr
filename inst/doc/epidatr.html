@@ -12,9 +12,47 @@
 
 
 
-<title>Delphi Epidata R API Client</title>
+<title>Get started with epidatr</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<style type="text/css">detaiks.chunk-details > summary.chunk-summary {
+text-align: right;
+}
+details.chunk-details[open] > summary.chunk-summary::after {
+content: "Hide";
+}
+details.chunk-details[open] > summary.chunk-summary > span.chunk-summary-text {
+display: none;
+}
+</style>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,7 +77,6 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -133,7 +170,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -145,339 +362,630 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<h1 class="title toc-ignore">Delphi Epidata R API Client</h1>
+<h1 class="title toc-ignore">Get started with epidatr</h1>
 
 
 
-<p>The epidatr package provides access to all the endpoints of the <a href="https://cmu-delphi.github.io/delphi-epidata/">Delphi Epidata API</a>, and can be used to make requests for specific signals on specific dates and in selected geographic regions.</p>
-<p>We recommend you register for an API key. While most endpoints are available without one, there are <a href="https://cmu-delphi.github.io/delphi-epidata/api/api_keys.html">limits on API usage for anonymous users</a>, including a rate limit. If you regularly request large amounts of data, please consider <a href="https://api.delphi.cmu.edu/epidata/admin/registration_form">registering for an API key</a>. You can then specify this key by either</p>
-<ul>
-<li>setting the environment variable <code>DELPHI_EPIDATA_KEY</code>, such as by editing your <code>.Renviron</code> file</li>
-<li>setting the option <code>delphi.epidata.key</code> using <code>options()</code></li>
-</ul>
+<p>The epidatr package provides access to all the endpoints of the <a href="https://cmu-delphi.github.io/delphi-epidata/">Delphi Epidata API</a>, and can be used to make requests for specific signals on specific dates and in select geographic regions.</p>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div id="installation" class="section level3">
+<h3>Installation</h3>
+<p>You can install the stable version of this package from CRAN:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;epidatr&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>pak<span class="op">::</span><span class="kw">pkg_install</span>(<span class="st">&quot;epidatr&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>renv<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;epidatr&quot;</span>)</span></code></pre></div>
+</details>
+<p>Or if you want the development version, install from GitHub:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="co"># Install the dev version using `pak` or `remotes`</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>pak<span class="op">::</span><span class="kw">pkg_install</span>(<span class="st">&quot;cmu-delphi/epidatr@dev&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>remotes<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;cmu-delphi/epidatr&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;dev&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>renv<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;cmu-delphi/epidatr@dev&quot;</span>)</span></code></pre></div>
+</details>
+</div>
+<div id="api-keys" class="section level3">
+<h3>API Keys</h3>
+<p>The Delphi API requires a (free) API key for full functionality. While most endpoints are available without one, there are <a href="https://cmu-delphi.github.io/delphi-epidata/api/api_keys.html">limits on API usage for anonymous users</a>, including a rate limit.</p>
+<p>To generate your key, <a href="https://api.delphi.cmu.edu/epidata/admin/registration_form">register for a pseudo-anonymous account</a>. See the <code>save_api_key()</code> function documentation for details on how to set up <code>epidatr</code> to use your API key.</p>
+<p><em>Note</em> that private endpoints (i.e. those prefixed with <code>pvt_</code>) require a separate key that needs to be passed as an argument. These endpoints require specific data use agreements to access.</p>
+</div>
+</div>
 <div id="basic-usage" class="section level2">
 <h2>Basic Usage</h2>
-<p>Fetching some data from the Delphi Epidata API is simple. Suppose we are interested in the <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast.html"><code>covidcast</code> endpoint</a>, which provides access to a range of data on COVID-19. Reviewing the endpoint documentation, we see that we need to specify a data source name, a signal name, a geographic level, a time resolution, and the location and times of interest.</p>
-<p>In this case, the <code>pub_covidcast()</code> function lets us specify these parameters for the endpoint and returns a tibble with the results:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>epidata <span class="ot">&lt;-</span> <span class="fu">pub_covidcast</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;fb-survey&quot;</span>, <span class="st">&quot;smoothed_cli&quot;</span>, <span class="st">&quot;state&quot;</span>, <span class="st">&quot;day&quot;</span>, <span class="st">&quot;pa&quot;</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">epirange</span>(<span class="dv">20210105</span>, <span class="dv">20210410</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>epidata</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 96 × 15</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 pa        smoothed_… fb-su… state    day       2021-01-05        NA 2021-01-10</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 pa        smoothed_… fb-su… state    day       2021-01-06        NA 2021-01-29</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 pa        smoothed_… fb-su… state    day       2021-01-07        NA 2021-01-29</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 pa        smoothed_… fb-su… state    day       2021-01-08        NA 2021-01-29</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 92 more rows</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;int&gt;, missing_value &lt;int&gt;, missing_stderr &lt;int&gt;,</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;int&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
-<p>We can then easily plot the data using ggplot2:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(epidata, <span class="fu">aes</span>(<span class="at">x =</span> time_value, <span class="at">y =</span> value)) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Smoothed CLI from Facebook Survey&quot;</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;PA, 2021&quot;</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;CLI&quot;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Fetching data from the Delphi Epidata API is simple. Suppose we are interested in the <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast.html"><code>covidcast</code> endpoint</a>, which provides access to a <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_signals.html">wide range of data</a> on COVID-19. Reviewing the endpoint documentation, we see that we <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast.html#constructing-api-queries">need to specify</a> a data source name, a signal name, a geographic level, a time resolution, and the location and times of interest.</p>
+<p>The <code>pub_covidcast()</code> function lets us access the <code>covidcast</code> endpoint:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">library</span>(epidatr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="co">#&gt; ! epidatr cache is being used (set env var EPIDATR_USE_CACHE=FALSE if not</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co">#&gt;   intended).</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co">#&gt; ℹ The cache directory is /fasterHome/workingDataDir/epidatr.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="co">#&gt; ℹ The cache will be cleared after 1 day and will be pruned if it exceeds 1024</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">#&gt;   MB.</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co">#&gt; ℹ The log of cache transactions is stored at</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#&gt;   /fasterHome/workingDataDir/epidatr/logfile.txt.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a><span class="co">#&gt;     filter, lag</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a><span class="co"># Obtain the most up-to-date version of the smoothed covid-like illness (CLI)</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a><span class="co"># signal from the COVID-19 Trends and Impact survey for the US</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a>epidata &lt;-<span class="st"> </span><span class="kw">pub_covidcast</span>(</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_cli&quot;</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;nation&quot;</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="st">&quot;us&quot;</span>,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">20210105</span>, <span class="dv">20210410</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(epidata))</span></code></pre></div>
+</details>
+<table style="width:100%;">
+<colgroup>
+<col width="5%"></col>
+<col width="7%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="6%"></col>
+<col width="5%"></col>
+<col width="6%"></col>
+<col width="2%"></col>
+<col width="8%"></col>
+<col width="8%"></col>
+<col width="11%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="7%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">us</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">nation</td>
+<td align="left">day</td>
+<td align="left">2021-01-05</td>
+<td align="right">NA</td>
+<td align="left">2021-01-10</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.184132</td>
+<td align="right">0.0162137</td>
+<td align="right">360654</td>
+</tr>
+<tr class="even">
+<td align="left">us</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">nation</td>
+<td align="left">day</td>
+<td align="left">2021-01-06</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">23</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.179046</td>
+<td align="right">0.0162516</td>
+<td align="right">356720</td>
+</tr>
+<tr class="odd">
+<td align="left">us</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">nation</td>
+<td align="left">day</td>
+<td align="left">2021-01-07</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.197495</td>
+<td align="right">0.0165100</td>
+<td align="right">351906</td>
+</tr>
+<tr class="even">
+<td align="left">us</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">nation</td>
+<td align="left">day</td>
+<td align="left">2021-01-08</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">21</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.218064</td>
+<td align="right">0.0167278</td>
+<td align="right">348471</td>
+</tr>
+<tr class="odd">
+<td align="left">us</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">nation</td>
+<td align="left">day</td>
+<td align="left">2021-01-09</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.219899</td>
+<td align="right">0.0168694</td>
+<td align="right">342855</td>
+</tr>
+<tr class="even">
+<td align="left">us</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">nation</td>
+<td align="left">day</td>
+<td align="left">2021-01-10</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.231889</td>
+<td align="right">0.0171074</td>
+<td align="right">336455</td>
+</tr>
+</tbody>
+</table>
+<p><code>pub_covidcast()</code> returns a <code>tibble</code>. (Here we’re using <code>knitr::kable()</code> to make it more readable.) Each row represents one observation in Pennsylvania on one day. The state abbreviation is given in the <code>geo_value</code> column, the date in the <code>time_value</code> column. Here <code>value</code> is the requested signal – in this case, the smoothed estimate of the percentage of people with COVID-like illness, based on the symptom surveys, and <code>stderr</code> is its standard error.</p>
+<p>The Epidata API makes signals available at different geographic levels, depending on the endpoint. To request signals for all states instead of the entire US, we use the <code>geo_type</code> argument paired with <code>*</code> for the <code>geo_values</code> argument. (Only some endpoints allow for the use of <code>*</code> to access data at all locations. Check the help for a given endpoint to see if it supports <code>*</code>.)</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co"># Obtain the most up-to-date version of the smoothed covid-like illness (CLI)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="co"># signal from the COVID-19 Trends and Impact survey for all states</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="kw">pub_covidcast</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_cli&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="st">&quot;*&quot;</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">20210105</span>, <span class="dv">20210410</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>)</span></code></pre></div>
+</details>
+<p>We can fetch a subset of states by listing out the desired locations:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="co"># Obtain the most up-to-date version of the smoothed covid-like illness (CLI)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="co"># signal from the COVID-19 Trends and Impact survey for Pennsylvania</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="kw">pub_covidcast</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_cli&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="kw">c</span>(<span class="st">&quot;pa&quot;</span>, <span class="st">&quot;ca&quot;</span>, <span class="st">&quot;fl&quot;</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">20210105</span>, <span class="dv">20210410</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>)</span></code></pre></div>
+</details>
+<p>We can also request data for a single location at a time, via the <code>geo_values</code> argument.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="co"># Obtain the most up-to-date version of the smoothed covid-like illness (CLI)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="co"># signal from the COVID-19 Trends and Impact survey for Pennsylvania</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>epidata &lt;-<span class="st"> </span><span class="kw">pub_covidcast</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_cli&quot;</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="st">&quot;pa&quot;</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">20210105</span>, <span class="dv">20210410</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(epidata))</span></code></pre></div>
+</details>
+<table style="width:100%;">
+<colgroup>
+<col width="5%"></col>
+<col width="7%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="6%"></col>
+<col width="5%"></col>
+<col width="6%"></col>
+<col width="2%"></col>
+<col width="8%"></col>
+<col width="8%"></col>
+<col width="11%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="7%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-01-05</td>
+<td align="right">NA</td>
+<td align="left">2021-01-10</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.098724</td>
+<td align="right">0.0749678</td>
+<td align="right">15955.01</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-01-06</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">23</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.076573</td>
+<td align="right">0.0747346</td>
+<td align="right">15626.01</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-01-07</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.181130</td>
+<td align="right">0.0793109</td>
+<td align="right">15345.01</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-01-08</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">21</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.175252</td>
+<td align="right">0.0798391</td>
+<td align="right">15076.01</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-01-09</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.177925</td>
+<td align="right">0.0808110</td>
+<td align="right">14773.01</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-01-10</td>
+<td align="right">NA</td>
+<td align="left">2021-01-29</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.174950</td>
+<td align="right">0.0816982</td>
+<td align="right">14474.01</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="getting-versioned-data" class="section level2">
+<h2>Getting versioned data</h2>
+<p>The Epidata API stores a historical record of all data, including corrections and updates, which is particularly useful for accurately backtesting forecasting models. To fetch versioned data, we can use the <code>as_of</code> argument.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="co"># Obtain the smoothed covid-like illness (CLI) signal from the COVID-19</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="co"># Trends and Impact survey for Pennsylvania as it was on 2021-06-01</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="kw">pub_covidcast</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_cli&quot;</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="st">&quot;pa&quot;</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">20210105</span>, <span class="dv">20210410</span>),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a>  <span class="dt">as_of =</span> <span class="st">&quot;2021-06-01&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a>)</span></code></pre></div>
+</details>
+<p>See <code>vignette(&quot;versioned-data&quot;)</code> for details and more ways to specify versioned data.</p>
+</div>
+<div id="plotting" class="section level2">
+<h2>Plotting</h2>
+<p>Because the output data is in a standard <code>tibble</code> format, we can easily plot it using <code>ggplot2</code>:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="kw">ggplot</span>(epidata, <span class="kw">aes</span>(<span class="dt">x =</span> time_value, <span class="dt">y =</span> value)) <span class="op">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">labs</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>    <span class="dt">title =</span> <span class="st">&quot;Smoothed CLI from Facebook Survey&quot;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a>    <span class="dt">subtitle =</span> <span class="st">&quot;PA, 2021&quot;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a>    <span class="dt">x =</span> <span class="st">&quot;Date&quot;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a>    <span class="dt">y =</span> <span class="st">&quot;CLI&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a>  )</span></code></pre></div>
+</details>
 <p><img src="data:image/png;base64,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" height="65%" /></p>
-<p>The <a href="https://cmu-delphi.github.io/delphi-epidata/">Delphi Epidata API documentation</a> has more information on the available endpoints and arguments. You can also use the <code>avail_endpoints()</code> function to get a table of endpoint functions:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">avail_endpoints</span>()</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 28 × 2</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Endpoint                          Description                                </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                             &lt;chr&gt;                                      </span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 pub_covid_hosp_facility()         COVID hospitalization data for specific fa…</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 pub_covid_hosp_facility_lookup()  COVID hospitalization facility identifiers </span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 pub_covid_hosp_state_timeseries() COVID Hospitalization Data by State        </span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 pub_covidcast()                   COVID data via the covidcast endpoint      </span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 pub_covidcast_meta()              Metadata for the COVIDcast endpoint        </span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 pub_delphi()                      Delphi&#39;s ILINet forecasts                  </span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 pub_dengue_nowcast()              Delphi&#39;s PAHO Dengue nowcast               </span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 pub_ecdc_ili()                    ECDC ILI data                              </span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 pub_flusurv()                     FluSurv hospitalization data               </span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 pub_fluview()                     FluView ILINet data                        </span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 pub_fluview_clinical()            FluView virological data from clinical labs</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 pub_fluview_meta()                FluView metadata                           </span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 pub_gft()                         Google Flu Trends data                     </span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 pub_kcdc_ili()                    KCDC ILI data                              </span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15 pub_meta()                        API metadata                               </span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16 pub_nidss_dengue()                NIDSS dengue data                          </span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17 pub_nidss_flu()                   NIDSS flu data                             </span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18 pub_nowcast()                     Delphi&#39;s ILI nowcast                       </span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19 pub_paho_dengue()                 PAHO Dengue data                           </span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 pub_wiki()                        Wikipedia access data                      </span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21 pvt_cdc()                         CDC page hits                              </span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22 pvt_dengue_sensors()              Dengue digital surveillance sensors in PAH…</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23 pvt_ght()                         Google Health Trends data                  </span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24 pvt_meta_norostat()               NoroSTAT metadata                          </span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25 pvt_norostat()                    NoroSTAT data (point data, no min/max)     </span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 26 pvt_quidel()                      Quidel COVID-19 and influenza testing data </span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 27 pvt_sensors()                     Digital surveillance sensors               </span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 28 pvt_twitter()                     HealthTweets data</span></span></code></pre></div>
-<p>Example queries with all the endpoint functions available in this package are given <a href="#example-queries">below</a>.</p>
+<p><code>ggplot2</code> can also be used to <a href="https://r-graphics.org/recipe-miscgraph-choropleth">create choropleths</a>.</p>
+<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r fold-hide"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">library</span>(maps)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="co"># Obtain the most up-to-date version of the smoothed covid-like illness (CLI)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a><span class="co"># signal from the COVID-19 Trends and Impact survey for all states on a single day</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a>cli_states &lt;-<span class="st"> </span><span class="kw">pub_covidcast</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_cli&quot;</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="st">&quot;*&quot;</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="dv">20210410</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true"></a>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true"></a><span class="co"># Get a mapping of states to longitude/latitude coordinates</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true"></a>states_map &lt;-<span class="st"> </span><span class="kw">map_data</span>(<span class="st">&quot;state&quot;</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true"></a><span class="co"># Convert state abbreviations into state names</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true"></a>cli_states &lt;-<span class="st"> </span><span class="kw">mutate</span>(</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true"></a>  cli_states,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true"></a>  <span class="dt">state =</span> <span class="kw">ifelse</span>(</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true"></a>    geo_value <span class="op">==</span><span class="st"> &quot;dc&quot;</span>,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true"></a>    <span class="st">&quot;district of columbia&quot;</span>,</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true"></a>    state.name[<span class="kw">match</span>(geo_value, <span class="kw">tolower</span>(state.abb))] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tolower</span>()</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true"></a>  )</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true"></a>)</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true"></a><span class="co"># Add coordinates for each state</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true"></a>cli_states &lt;-<span class="st"> </span><span class="kw">left_join</span>(states_map, cli_states, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;region&quot;</span> =<span class="st"> &quot;state&quot;</span>))</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true"></a><span class="co"># Plot</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true"></a><span class="kw">ggplot</span>(cli_states, <span class="kw">aes</span>(<span class="dt">x =</span> long, <span class="dt">y =</span> lat, <span class="dt">group =</span> group, <span class="dt">fill =</span> value)) <span class="op">+</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_polygon</span>(<span class="dt">colour =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">linewidth =</span> <span class="fl">0.2</span>) <span class="op">+</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true"></a><span class="st">  </span><span class="kw">coord_map</span>(<span class="st">&quot;polyconic&quot;</span>) <span class="op">+</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true"></a><span class="st">  </span><span class="kw">labs</span>(</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true"></a>    <span class="dt">title =</span> <span class="st">&quot;Smoothed CLI from Facebook Survey&quot;</span>,</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true"></a>    <span class="dt">subtitle =</span> <span class="st">&quot;All states, 2021-04-10&quot;</span>,</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true"></a>    <span class="dt">x =</span> <span class="st">&quot;Longitude&quot;</span>,</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true"></a>    <span class="dt">y =</span> <span class="st">&quot;Latitude&quot;</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true"></a>  )</span></code></pre></div>
+</details>
+<p><img src="data:image/png;base64,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/PNPmqYNBkNQUNCQIUMoioJHJ0+eDAAoLCyknb5/KDCBQJCXlweP5ufni8Xi/v37u3xYl68CCqyioiImJiY6Ohp+ixlanMBomi4vL//444/79OkjEAgAAAiCpKWl7dmzh4nQuXPnXr16MburV68GAMAvMTwdAPDNN9/QNH316lUAwLfffmudfkpKSvfu3V0epe0JLDY21jqyr6/va6+9RtN0SUkJAGDjxo3WR8ePHx8YGEjT9I8//ggAYL6XNE3X1dXxeDy7AisoKAAALFmyxOWL8qzA2rRpw+y6fDPu/wQNgQJryK+//krTtMlkIgiCifzTTz/BaiFN07BevX//fuZofn5+RkZGSUmJ8/cPBTZp0iTro9OnT8cwjCCIZmYSDMMWLVoEqzNHjx61edgW1wYDAPj5+b322muZmZlqtfrYsWOvv/56Tk7O0KFDf/75ZyaOWCxmtjkcDgBALpdb70Lu3r0LAIiLi7NOPy4uDoY7P2oX60YRAIBp3N++fRsAMGXKFOtO559++qmqqgoAkJubCwBISEhgTpRKpQ370CABAQE4jpeWljq6By8RERHBbLvzZtz8CRzRsIo4ZswYAACXyz169OiCBQuGDRsWExMzYcIE5pQ7d+4AAGJjY5mQsLCwl156KTAw0Pn7h7Rt29b6Btq1a0eSZGFhYfMzycqVKysrKzkcztq1a20es2X1Imq12t9//z05OblNmzYAAC6X27179+7du8+ZMychIeHjjz+GVRH3oWm6YSCKoiRJujxqFx6PZzecz+cDAL788svk5OSGRzHMznsWCoV2k8JxvE2bNtnZ2XaPtm/fPiAg4MCBA47usMlY308T3oynWLBgwcqVK3v06NGzZ8/x48f7+fn1798fHjKbzcCBep2/f4hNVydMh8fjNT+T+Pj4HD58+NNPP127du2sWbOs+7pbXAk2ceLEhsPKQUFB0dHRer2+salFRkYCAG7evGkdeOPGjaioKJdHm3AhBEE6WlFdXQ17w2G5Zz2KShCEk3Kyf//+p06dOn36tE34tWvXrly5kpSU1NjbaywefDONoqam5pNPPlmyZMnRo0eXLVs2YcKEoKAg5mh0dDR4UFmAFBcXz5gx49KlS87fP+T69evW18rOzubz+YGBgc3PJHPmzImKilq2bJmPj8/cuXMpimIOtSyBicXiHj16ZGRkXLp0yTr8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" height="65%" /></p>
 </div>
-<div id="advanced-usage-experimental" class="section level2">
-<h2>Advanced Usage (Experimental)</h2>
-<p>The <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast.html">COVIDcast endpoint</a> of the Epidata API contains many separate data sources and signals. It can be difficult to find the name of the signal you’re looking for, so you can use <code>covidcast_epidata()</code> to get help with finding sources and functions without leaving R.</p>
-<p>The <code>covidcast_epidata()</code> function fetches a list of all signals, and returns an object containing fields for every signal:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>epidata <span class="ot">&lt;-</span> <span class="fu">covidcast_epidata</span>()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>epidata<span class="sc">$</span>signals</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 443 × 3</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   source signal                        short_description                        </span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;                         &lt;chr&gt;                                    </span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 chng   smoothed_outpatient_cli       Estimated percentage of outpatient docto…</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 chng   smoothed_adj_outpatient_cli   Estimated percentage of outpatient docto…</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 chng   smoothed_outpatient_covid     COVID-Confirmed Doctor Visits            </span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 chng   smoothed_adj_outpatient_covid COVID-Confirmed Doctor Visits            </span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 439 more rows</span></span></code></pre></div>
-<p>If you use an editor that supports tab completion, such as RStudio, type <code>epidata$signals$</code> and wait for the tab completion popup. You will be able to type the name of signals and have the autocomplete feature select them from the list for you. Note that some signal names have dashes in them, so to access them we rely on the backtick operator:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>epidata<span class="sc">$</span>signals<span class="sc">$</span><span class="st">`</span><span class="at">fb-survey:smoothed_cli</span><span class="st">`</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;COVID-Like Symptoms (Unweighted 7-day average)&quot;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;fb-survey:smoothed_cli&quot;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Estimated percentage of people with COVID-like illness &quot;</span></span></code></pre></div>
-<p>These objects can be used directly to fetch data, without requiring us to use the <code>pub_covidcast()</code> function. Simply use the <code>$call</code> attribute of the object:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>epidata<span class="sc">$</span>signals<span class="sc">$</span><span class="st">`</span><span class="at">fb-survey:smoothed_cli</span><span class="st">`</span><span class="sc">$</span><span class="fu">call</span>(<span class="st">&quot;state&quot;</span>, <span class="st">&quot;pa&quot;</span>, <span class="fu">epirange</span>(<span class="dv">20210405</span>, <span class="dv">20210410</span>))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 15</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 pa        smoothed_… fb-su… state    day       2021-04-05        NA 2021-04-10</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 pa        smoothed_… fb-su… state    day       2021-04-06        NA 2021-04-11</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 pa        smoothed_… fb-su… state    day       2021-04-07        NA 2021-04-12</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 pa        smoothed_… fb-su… state    day       2021-04-08        NA 2021-04-13</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;int&gt;, missing_value &lt;int&gt;, missing_stderr &lt;int&gt;,</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;int&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
-</div>
-<div id="advanced-usage-debugging" class="section level2">
-<h2>Advanced Usage (Debugging)</h2>
-<p>We can obtain the [<code>epidata_call</code>] object underlying a request by setting the <code>dry_run</code> argument to <code>TRUE</code> in <code>fetch_args_list()</code>:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covidcast</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;fb-survey&quot;</span>, <span class="st">&quot;smoothed_cli&quot;</span>, <span class="st">&quot;state&quot;</span>, <span class="st">&quot;day&quot;</span>, <span class="st">&quot;pa&quot;</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">epirange</span>(<span class="dv">20210405</span>, <span class="dv">20210410</span>),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fetch_args =</span> <span class="fu">fetch_args_list</span>(<span class="at">dry_run =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── &lt;epidata_call&gt; object: ──────────────────────────────────────────────────────</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • Pipe this object into `fetch()` to actually fetch the data</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • Request URL:</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   https://api.delphi.cmu.edu/epidata/covidcast/?data_source=fb-survey&amp;signals=smoothed_cli&amp;geo_type=state&amp;time_type=day&amp;geo_values=pa&amp;time_values=20210405-20210410</span></span></code></pre></div>
-</div>
-<div id="example-queries" class="section level2">
-<h2>Example Queries</h2>
-<p>(Some endpoints allow for the use of <code>*</code> to access data at all locations. Check the help for a given endpoint to see if it supports <code>*</code>.)</p>
-<div id="covidcast-main-endpoint" class="section level3">
-<h3>COVIDcast Main Endpoint</h3>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_signals.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covidcast_signals.html</a></p>
-<p>County geo_values are <a href="https://en.wikipedia.org/wiki/List_of_United_States_FIPS_codes_by_county">FIPS codes</a> and are discussed in the API docs <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_geography.html">here</a>. The example below is for Orange County, California.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covidcast</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">signals =</span> <span class="st">&quot;smoothed_accept_covid_vaccine&quot;</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">geo_type =</span> <span class="st">&quot;county&quot;</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_values =</span> <span class="fu">epirange</span>(<span class="dv">20201221</span>, <span class="dv">20201225</span>),</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;06059&quot;</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 5 × 15</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 06059     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 06059     smoothed_… fb-su… county   day       2020-12-22        NA 2020-12-23</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 06059     smoothed_… fb-su… county   day       2020-12-23        NA 2020-12-24</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 06059     smoothed_… fb-su… county   day       2020-12-24        NA 2020-12-25</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;int&gt;, missing_value &lt;int&gt;, missing_stderr &lt;int&gt;,</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;int&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
-<p>The <code>covidcast</code> endpoint supports <code>*</code> in its time and geo fields:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covidcast</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">signals =</span> <span class="st">&quot;smoothed_accept_covid_vaccine&quot;</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">geo_type =</span> <span class="st">&quot;county&quot;</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_values =</span> <span class="fu">epirange</span>(<span class="dv">20201221</span>, <span class="dv">20201225</span>),</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;*&quot;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2,025 × 15</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 01000     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 01073     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 01089     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 01097     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 2,021 more rows</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;int&gt;, missing_value &lt;int&gt;, missing_stderr &lt;int&gt;,</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;int&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
-</div>
-<div id="other-covid-endpoints" class="section level3">
-<h3>Other Covid Endpoints</h3>
-<div id="covid-19-hospitalization-facility-lookup" class="section level4">
-<h4>COVID-19 Hospitalization: Facility Lookup</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility_lookup.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility_lookup.html</a></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covid_hosp_facility_lookup</span>(<span class="at">city =</span> <span class="st">&quot;southlake&quot;</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covid_hosp_facility_lookup</span>(<span class="at">state =</span> <span class="st">&quot;WY&quot;</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># A non-example (there is no city called New York in Wyoming)</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covid_hosp_facility_lookup</span>(<span class="at">state =</span> <span class="st">&quot;WY&quot;</span>, <span class="at">city =</span> <span class="st">&quot;New York&quot;</span>)</span></code></pre></div>
-</div>
-<div id="covid-19-hospitalization-by-facility" class="section level4">
-<h4>COVID-19 Hospitalization by Facility</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility.html</a></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covid_hosp_facility</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">hospital_pks =</span> <span class="st">&quot;100075&quot;</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">collection_weeks =</span> <span class="fu">epirange</span>(<span class="dv">20200101</span>, <span class="dv">20200501</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-</div>
-<div id="covid-19-hospitalization-by-state" class="section level4">
-<h4>COVID-19 Hospitalization by State</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp.html</a></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_covid_hosp_state_timeseries</span>(<span class="at">states =</span> <span class="st">&quot;MA&quot;</span>, <span class="at">dates =</span> <span class="st">&quot;20200510&quot;</span>)</span></code></pre></div>
+<div id="finding-locations-of-interest" class="section level2">
+<h2>Finding locations of interest</h2>
+<p>Most data is only available for the US. Select endpoints report other countries at the national and/or regional levels. Endpoint descriptions explicitly state when they cover non-US locations.</p>
+<p>For endpoints that report US data, see the <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_geography.html">geographic coding documentation</a> for available geographic levels.</p>
+<div id="international-data" class="section level3">
+<h3>International data</h3>
+<p>International data is available via</p>
+<ul>
+<li><code>pub_dengue_nowcast</code> (North and South America)</li>
+<li><code>pub_ecdc_ili</code> (Europe)</li>
+<li><code>pub_kcdc_ili</code> (Korea)</li>
+<li><code>pub_nidss_dengue</code> (Taiwan)</li>
+<li><code>pub_nidss_flu</code> (Taiwan)</li>
+<li><code>pub_paho_dengue</code> (North and South America)</li>
+<li><code>pvt_dengue_sensors</code> (North and South America)</li>
+</ul>
 </div>
 </div>
-<div id="flu-endpoints" class="section level3">
-<h3>Flu Endpoints</h3>
-<div id="delphis-ilinet-forecasts" class="section level4">
-<h4>Delphi’s ILINet forecasts</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/delphi.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/delphi.html</a></p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>del <span class="ot">&lt;-</span> <span class="fu">pub_delphi</span>(<span class="at">system =</span> <span class="st">&quot;ec&quot;</span>, <span class="at">epiweek =</span> <span class="dv">201501</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(del[[1L]]<span class="sc">$</span>forecast)</span></code></pre></div>
-</div>
-<div id="flusurv-hospitalization-data" class="section level4">
-<h4>FluSurv hospitalization data</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/flusurv.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/flusurv.html</a></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_flusurv</span>(<span class="at">locations =</span> <span class="st">&quot;ca&quot;</span>, <span class="at">epiweeks =</span> <span class="dv">202001</span>)</span></code></pre></div>
-</div>
-<div id="fluview-data" class="section level4">
-<h4>Fluview data</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/fluview.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/fluview.html</a></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_fluview</span>(<span class="at">regions =</span> <span class="st">&quot;nat&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">201201</span>, <span class="dv">202001</span>))</span></code></pre></div>
-</div>
-<div id="fluview-virological-data-from-clinical-labs" class="section level4">
-<h4>Fluview virological data from clinical labs</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/fluview_clinical.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/fluview_clinical.html</a></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_fluview_clinical</span>(<span class="at">regions =</span> <span class="st">&quot;nat&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">201601</span>, <span class="dv">201701</span>))</span></code></pre></div>
-</div>
-<div id="fluview-metadata" class="section level4">
-<h4>Fluview metadata</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/fluview_meta.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/fluview_meta.html</a></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_fluview_meta</span>()</span></code></pre></div>
-</div>
-<div id="google-flu-trends-data" class="section level4">
-<h4>Google Flu Trends data</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/gft.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/gft.html</a></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_gft</span>(<span class="at">locations =</span> <span class="st">&quot;hhs1&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">201201</span>, <span class="dv">202001</span>))</span></code></pre></div>
-</div>
-<div id="ecdc-ili" class="section level4">
-<h4>ECDC ILI</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/ecdc_ili.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/ecdc_ili.html</a></p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_ecdc_ili</span>(<span class="at">regions =</span> <span class="st">&quot;Armenia&quot;</span>, <span class="at">epiweeks =</span> <span class="dv">201840</span>)</span></code></pre></div>
-</div>
-<div id="kcdc-ili" class="section level4">
-<h4>KCDC ILI</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/kcdc_ili.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/kcdc_ili.html</a></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_kcdc_ili</span>(<span class="at">regions =</span> <span class="st">&quot;ROK&quot;</span>, <span class="at">epiweeks =</span> <span class="dv">200436</span>)</span></code></pre></div>
-</div>
-<div id="nidss-flu" class="section level4">
-<h4>NIDSS Flu</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/nidss_flu.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/nidss_flu.html</a></p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_nidss_flu</span>(<span class="at">regions =</span> <span class="st">&quot;taipei&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">200901</span>, <span class="dv">201301</span>))</span></code></pre></div>
-</div>
-<div id="ili-nearby-nowcast" class="section level4">
-<h4>ILI Nearby Nowcast</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/nowcast.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/nowcast.html</a></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_nowcast</span>(<span class="at">locations =</span> <span class="st">&quot;ca&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">202201</span>, <span class="dv">202319</span>))</span></code></pre></div>
-</div>
-</div>
-<div id="dengue-endpoints" class="section level3">
-<h3>Dengue Endpoints</h3>
-<div id="delphis-dengue-nowcast" class="section level4">
-<h4>Delphi’s Dengue Nowcast</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/dengue_nowcast.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/dengue_nowcast.html</a></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_dengue_nowcast</span>(<span class="at">locations =</span> <span class="st">&quot;pr&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">201401</span>, <span class="dv">202301</span>))</span></code></pre></div>
-</div>
-<div id="nidss-dengue" class="section level4">
-<h4>NIDSS dengue</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/nidss_dengue.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/nidss_dengue.html</a></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_nidss_dengue</span>(<span class="at">locations =</span> <span class="st">&quot;taipei&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">200301</span>, <span class="dv">201301</span>))</span></code></pre></div>
-</div>
-</div>
-<div id="paho-dengue" class="section level3">
-<h3>PAHO Dengue</h3>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/paho_dengue.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/paho_dengue.html</a></p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_paho_dengue</span>(<span class="at">regions =</span> <span class="st">&quot;ca&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">200201</span>, <span class="dv">202319</span>))</span></code></pre></div>
-</div>
-<div id="other-endpoints" class="section level3">
-<h3>Other Endpoints</h3>
-<div id="wikipedia-access" class="section level4">
-<h4>Wikipedia Access</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/wiki.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/wiki.html</a></p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pub_wiki</span>(<span class="at">language =</span> <span class="st">&quot;en&quot;</span>, <span class="at">articles =</span> <span class="st">&quot;influenza&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">202001</span>, <span class="dv">202319</span>))</span></code></pre></div>
-</div>
-</div>
-<div id="private-methods" class="section level3">
-<h3>Private methods</h3>
-<p>These require private access keys to use (separate from the Delphi Epidata API key). To actually run these locally, you will need to store these secrets in your <code>.Reviron</code> file, or set them as environmental variables.</p>
-<div id="cdc" class="section level4">
-<h4>CDC</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/cdc.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/cdc.html</a></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_cdc</span>(<span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_CDC&quot;</span>), <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">202003</span>, <span class="dv">202304</span>), <span class="at">locations =</span> <span class="st">&quot;ma&quot;</span>)</span></code></pre></div>
-</div>
-<div id="dengue-digital-surveillance-sensors" class="section level4">
-<h4>Dengue Digital Surveillance Sensors</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/dengue_sensors.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/dengue_sensors.html</a></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_dengue_sensors</span>(</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_SENSORS&quot;</span>),</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">names =</span> <span class="st">&quot;ght&quot;</span>,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> <span class="st">&quot;ag&quot;</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">201404</span>, <span class="dv">202004</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-</div>
-<div id="google-health-trends" class="section level4">
-<h4>Google Health Trends</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/ght.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/ght.html</a></p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_ght</span>(</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_GHT&quot;</span>),</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">199301</span>, <span class="dv">202304</span>),</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> <span class="st">&quot;ma&quot;</span>,</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">query =</span> <span class="st">&quot;how to get over the flu&quot;</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-</div>
-<div id="norostat-metadata" class="section level4">
-<h4>NoroSTAT metadata</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/meta_norostat.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/meta_norostat.html</a></p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_meta_norostat</span>(<span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_NOROSTAT&quot;</span>))</span></code></pre></div>
-</div>
-<div id="norostat-data" class="section level4">
-<h4>NoroSTAT data</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/norostat.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/norostat.html</a></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_norostat</span>(<span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_NOROSTAT&quot;</span>), <span class="at">locations =</span> <span class="st">&quot;1&quot;</span>, <span class="at">epiweeks =</span> <span class="dv">201233</span>)</span></code></pre></div>
-</div>
-<div id="quidel-influenza-testing" class="section level4">
-<h4>Quidel Influenza testing</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/quidel.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/quidel.html</a></p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_quidel</span>(<span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_QUIDEL&quot;</span>), <span class="at">locations =</span> <span class="st">&quot;hhs1&quot;</span>, <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">200301</span>, <span class="dv">202105</span>))</span></code></pre></div>
-</div>
-<div id="sensors" class="section level4">
-<h4>Sensors</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/sensors.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/sensors.html</a></p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_sensors</span>(</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_SENSORS&quot;</span>),</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">names =</span> <span class="st">&quot;sar3&quot;</span>,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> <span class="st">&quot;nat&quot;</span>,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">200301</span>, <span class="dv">202105</span>)</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-</div>
-<div id="twitter" class="section level4">
-<h4>Twitter</h4>
-<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/twitter.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/twitter.html</a></p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pvt_twitter</span>(</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_TWITTER&quot;</span>),</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> <span class="st">&quot;nat&quot;</span>,</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">200301</span>, <span class="dv">202105</span>)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-</div>
-</div>
+<div id="finding-data-sources-and-signals-of-interest" class="section level2">
+<h2>Finding data sources and signals of interest</h2>
+<p>Above we used data from <a href="https://delphi.cmu.edu/covid19/ctis/">Delphi’s symptom surveys</a>, but the Epidata API includes numerous data streams: medical claims data, cases and deaths, mobility, and many others. This can make it a challenge to find the data stream that you are most interested in.</p>
+<p>The Epidata documentation lists all the data sources and signals available through the API for <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_signals.html">COVID-19</a> and for <a href="https://cmu-delphi.github.io/delphi-epidata/api/README.html#source-specific-parameters">other diseases</a>.</p>
+<p>You can also use the <code>avail_endpoints()</code> function to get a table of endpoint functions:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">avail_endpoints</span>()</span></code></pre></div>
+</details>
+<pre><code>#&gt; ℹ Data is available for the US only, unless otherwise specified</code></pre>
+<table>
+<colgroup>
+<col width="33%"></col>
+<col width="66%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Endpoint</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pub_covid_hosp_facility()</td>
+<td align="left">COVID hospitalizations by facility</td>
+</tr>
+<tr class="even">
+<td align="left">pub_covid_hosp_facility_lookup()</td>
+<td align="left">Helper for finding COVID hospitalization facilities</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_covid_hosp_state_timeseries()</td>
+<td align="left">COVID hospitalizations by state</td>
+</tr>
+<tr class="even">
+<td align="left">pub_covidcast()</td>
+<td align="left">Various COVID and flu signals via the COVIDcast endpoint</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_covidcast_meta()</td>
+<td align="left">Metadata for the COVIDcast endpoint</td>
+</tr>
+<tr class="even">
+<td align="left">pub_delphi()</td>
+<td align="left">Delphi’s ILINet outpatient doctor visits forecasts</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_dengue_nowcast()</td>
+<td align="left">Delphi’s PAHO dengue nowcasts (North and South America)</td>
+</tr>
+<tr class="even">
+<td align="left">pub_ecdc_ili()</td>
+<td align="left">ECDC ILI incidence (Europe)</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_flusurv()</td>
+<td align="left">CDC FluSurv flu hospitalizations</td>
+</tr>
+<tr class="even">
+<td align="left">pub_fluview()</td>
+<td align="left">CDC FluView ILINet outpatient doctor visits</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_fluview_clinical()</td>
+<td align="left">CDC FluView flu tests from clinical labs</td>
+</tr>
+<tr class="even">
+<td align="left">pub_fluview_meta()</td>
+<td align="left">Metadata for the FluView endpoint</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_gft()</td>
+<td align="left">Google Flu Trends flu search volume</td>
+</tr>
+<tr class="even">
+<td align="left">pub_kcdc_ili()</td>
+<td align="left">KCDC ILI incidence (Korea)</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_meta()</td>
+<td align="left">Metadata for the Delphi Epidata API</td>
+</tr>
+<tr class="even">
+<td align="left">pub_nidss_dengue()</td>
+<td align="left">NIDSS dengue cases (Taiwan)</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_nidss_flu()</td>
+<td align="left">NIDSS flu doctor visits (Taiwan)</td>
+</tr>
+<tr class="even">
+<td align="left">pub_nowcast()</td>
+<td align="left">Delphi’s ILI Nearby nowcasts</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_paho_dengue()</td>
+<td align="left">PAHO dengue data (North and South America)</td>
+</tr>
+<tr class="even">
+<td align="left">pub_wiki()</td>
+<td align="left">Wikipedia webpage counts by article</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_cdc()</td>
+<td align="left">CDC total and by topic webpage visits</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_dengue_sensors()</td>
+<td align="left">PAHO dengue digital surveillance sensors (North and South America)</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_ght()</td>
+<td align="left">Google Health Trends health topics search volume</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_meta_norostat()</td>
+<td align="left">Metadata for the NoroSTAT endpoint</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_norostat()</td>
+<td align="left">CDC NoroSTAT norovirus outbreaks</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_quidel()</td>
+<td align="left">Quidel COVID-19 and influenza testing data</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_sensors()</td>
+<td align="left">Influenza and dengue digital surveillance sensors</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_twitter()</td>
+<td align="left">HealthTweets total and influenza-related tweets</td>
+</tr>
+</tbody>
+</table>
+<p>See <code>vignette(&quot;signal-discovery&quot;)</code> for more information.</p>
 </div>
 
 

@@ -1,8 +1,7 @@
 Package: epidatr
 Type: Package
 Title: Client for Delphi's 'Epidata' API
-Version: 1.0.0
-Date: 2023-09-11
+Version: 1.1.0
 Authors@R: 
   c(
     person("Logan", "Brooks", email = "lcbrooks@andrew.cmu.edu", role = c("aut")),
@@ -25,10 +24,11 @@ Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports: cachem, checkmate, cli, httr, glue, jsonlite, magrittr,
-        MMWRweek, purrr, openssl, readr, tibble, xml2
-RoxygenNote: 7.2.3
-Suggests: dplyr, ggplot2, knitr, rmarkdown, rlang, testthat (>= 3.1.5),
-        withr
+        MMWRweek, purrr, openssl, rappdirs, readr, tibble, usethis,
+        xml2
+RoxygenNote: 7.3.1
+Suggests: dplyr, ggplot2, knitr, maps, mapproj, rmarkdown, rlang,
+        testthat (>= 3.1.5), withr
 VignetteBuilder: knitr
 Language: en-US
 Config/testthat/edition: 3
@@ -36,7 +36,7 @@ Collate: 'auth.R' 'avail_endpoints.R' 'cache.R' 'check.R' 'constants.R'
         'covidcast.R' 'endpoints.R' 'epidatacall.R' 'epidatr-package.R'
         'model.R' 'request.R' 'utils-pipe.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2023-09-12 08:00:42 UTC; dsweber
+Packaged: 2024-02-27 20:20:56 UTC; dsweber
 Author: Logan Brooks [aut],
   Dmitry Shemetov [aut],
   Samuel Gratzl [aut],
@@ -49,4 +49,4 @@ Author: Logan Brooks [aut],
   Kathryn Mazaitis [ctb]
 Maintainer: David Weber <davidweb@andrew.cmu.edu>
 Repository: CRAN
-Date/Publication: 2023-09-19 14:10:02 UTC
+Date/Publication: 2024-03-01 00:02:39 UTC

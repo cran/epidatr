@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Finding data sources and signals of interest</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Finding data sources and signals of interest</h1>
+
+
+
+<p>The Epidata API includes numerous data streams – medical claims data, cases and deaths, mobility, and many others – covering different geographic regions. This can make it a challenge to find the data stream that you are most interested in.</p>
+<p>Example queries with all the endpoint functions available in this package are given <a href="#example-queries">below</a>.</p>
+<div id="using-the-documentation" class="section level2">
+<h2>Using the documentation</h2>
+<p>The Epidata documentation lists all the data sources and signals available through the API for <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_signals.html">COVID-19</a> and for <a href="https://cmu-delphi.github.io/delphi-epidata/api/README.html#source-specific-parameters">other diseases</a>. The site also includes a search tool if you have a keyword (e.g. “Taiwan”) in mind.</p>
+</div>
+<div id="signal-metadata" class="section level2">
+<h2>Signal metadata</h2>
+<p>Some endpoints have partner metadata available that provides information about the signals that are available, for example, what time ranges they are available for, and when they have been updated.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Endpoint</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pub_covidcast_meta()</td>
+<td align="left">Metadata for the COVIDcast endpoint</td>
+</tr>
+<tr class="even">
+<td align="left">pub_fluview_meta()</td>
+<td align="left">Metadata for the FluView endpoint</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_meta()</td>
+<td align="left">Metadata for the Delphi Epidata API</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="interactive-tooling" class="section level2">
+<h2>Interactive tooling</h2>
+<p>We provide a couple <code>epidatr</code> functions to help find data sources and signals.</p>
+<p>The <code>avail_endpoints()</code> function lists endpoints, each of which, except for COVIDcast, corresponds to a single data source. <code>avail_endpoints()</code> outputs a <code>tibble</code> of endpoints and brief descriptions, which explicitly state when they cover non-US locations:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">avail_endpoints</span>()</span></code></pre></div>
+<table>
+<colgroup>
+<col width="33%"></col>
+<col width="66%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Endpoint</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pub_covid_hosp_facility()</td>
+<td align="left">COVID hospitalizations by facility</td>
+</tr>
+<tr class="even">
+<td align="left">pub_covid_hosp_facility_lookup()</td>
+<td align="left">Helper for finding COVID hospitalization facilities</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_covid_hosp_state_timeseries()</td>
+<td align="left">COVID hospitalizations by state</td>
+</tr>
+<tr class="even">
+<td align="left">pub_covidcast()</td>
+<td align="left">Various COVID and flu signals via the COVIDcast endpoint</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_covidcast_meta()</td>
+<td align="left">Metadata for the COVIDcast endpoint</td>
+</tr>
+<tr class="even">
+<td align="left">pub_delphi()</td>
+<td align="left">Delphi’s ILINet outpatient doctor visits forecasts</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_dengue_nowcast()</td>
+<td align="left">Delphi’s PAHO dengue nowcasts (North and South America)</td>
+</tr>
+<tr class="even">
+<td align="left">pub_ecdc_ili()</td>
+<td align="left">ECDC ILI incidence (Europe)</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_flusurv()</td>
+<td align="left">CDC FluSurv flu hospitalizations</td>
+</tr>
+<tr class="even">
+<td align="left">pub_fluview()</td>
+<td align="left">CDC FluView ILINet outpatient doctor visits</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_fluview_clinical()</td>
+<td align="left">CDC FluView flu tests from clinical labs</td>
+</tr>
+<tr class="even">
+<td align="left">pub_fluview_meta()</td>
+<td align="left">Metadata for the FluView endpoint</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_gft()</td>
+<td align="left">Google Flu Trends flu search volume</td>
+</tr>
+<tr class="even">
+<td align="left">pub_kcdc_ili()</td>
+<td align="left">KCDC ILI incidence (Korea)</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_meta()</td>
+<td align="left">Metadata for the Delphi Epidata API</td>
+</tr>
+<tr class="even">
+<td align="left">pub_nidss_dengue()</td>
+<td align="left">NIDSS dengue cases (Taiwan)</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_nidss_flu()</td>
+<td align="left">NIDSS flu doctor visits (Taiwan)</td>
+</tr>
+<tr class="even">
+<td align="left">pub_nowcast()</td>
+<td align="left">Delphi’s ILI Nearby nowcasts</td>
+</tr>
+<tr class="odd">
+<td align="left">pub_paho_dengue()</td>
+<td align="left">PAHO dengue data (North and South America)</td>
+</tr>
+<tr class="even">
+<td align="left">pub_wiki()</td>
+<td align="left">Wikipedia webpage counts by article</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_cdc()</td>
+<td align="left">CDC total and by topic webpage visits</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_dengue_sensors()</td>
+<td align="left">PAHO dengue digital surveillance sensors (North and South America)</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_ght()</td>
+<td align="left">Google Health Trends health topics search volume</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_meta_norostat()</td>
+<td align="left">Metadata for the NoroSTAT endpoint</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_norostat()</td>
+<td align="left">CDC NoroSTAT norovirus outbreaks</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_quidel()</td>
+<td align="left">Quidel COVID-19 and influenza testing data</td>
+</tr>
+<tr class="odd">
+<td align="left">pvt_sensors()</td>
+<td align="left">Influenza and dengue digital surveillance sensors</td>
+</tr>
+<tr class="even">
+<td align="left">pvt_twitter()</td>
+<td align="left">HealthTweets total and influenza-related tweets</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>covidcast_epidata()</code> function lets you look more in-depth at the data sources available through the COVIDcast endpoint. The function describes all available data sources and signals:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>covid_sources &lt;-<span class="st"> </span><span class="kw">covidcast_epidata</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">head</span>(covid_sources<span class="op">$</span>sources, <span class="dt">n =</span> <span class="dv">2</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="co">#&gt; $chng</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;Change Healthcare&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;chng&quot;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;Change Healthcare is a healthcare technology company that aggregates medical claims data from many healthcare providers. This source includes aggregated counts of claims with confirmed COVID-19 or COVID-related symptoms. All claims data has been de-identified in accordance with HIPAA privacy regulations. &quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 6 × 2</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="co">#&gt;   signal                        short_description                               </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;                         &lt;chr&gt;                                           </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a><span class="co">#&gt; 1 smoothed_outpatient_cli       Estimated percentage of outpatient doctor visit…</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a><span class="co">#&gt; 2 smoothed_adj_outpatient_cli   Estimated percentage of outpatient doctor visit…</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a><span class="co">#&gt; 3 smoothed_outpatient_covid     COVID-Confirmed Doctor Visits                   </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a><span class="co">#&gt; 4 smoothed_adj_outpatient_covid COVID-Confirmed Doctor Visits                   </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a><span class="co">#&gt; # ℹ 2 more rows</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a><span class="co">#&gt; $`covid-act-now`</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;Covid Act Now (CAN)&quot;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;covid-act-now&quot;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;COVID Act Now (CAN) tracks COVID-19 testing statistics, such as positivity rates and total tests performed. This source only includes CAN data from the CDC&#39;s COVID-19 Integrated County View.&quot;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 2 × 2</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a><span class="co">#&gt;   signal                       short_description                                </span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;                        &lt;chr&gt;                                            </span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true"></a><span class="co">#&gt; 1 pcr_specimen_positivity_rate Proportion of PCR specimens tested that have a p…</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true"></a><span class="co">#&gt; 2 pcr_specimen_total_tests     Total number of PCR specimens tested</span></span></code></pre></div>
+<p>Each source is included as an entry in the <code>covid_sources$sources</code> list, associated with a <code>tibble</code> describing included signals.</p>
+<p>If you use an editor that supports tab completion, such as RStudio, type <code>covid_sources$source$</code> and wait for the tab completion popup. You will be able to browse the list of data sources.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>covid_sources<span class="op">$</span>signals</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 443 × 3</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co">#&gt;   source signal                        short_description                        </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;                         &lt;chr&gt;                                    </span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="co">#&gt; 1 chng   smoothed_outpatient_cli       Estimated percentage of outpatient docto…</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">#&gt; 2 chng   smoothed_adj_outpatient_cli   Estimated percentage of outpatient docto…</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co">#&gt; 3 chng   smoothed_outpatient_covid     COVID-Confirmed Doctor Visits            </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#&gt; 4 chng   smoothed_adj_outpatient_covid COVID-Confirmed Doctor Visits            </span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="co">#&gt; # ℹ 439 more rows</span></span></code></pre></div>
+<p>If you use an editor that supports tab completion, type <code>covid_sources$signals$</code> and wait for the tab completion popup. You will be able to type the name of signals and have the autocomplete feature select them from the list for you. In the tab-completion popup, signal names are prefixed with the name of the data source for filtering convenience.</p>
+<p><em>Note</em> that some signal names have dashes in them, so to access them we rely on the backtick operator:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>covid_sources<span class="op">$</span>signals<span class="op">$</span><span class="st">`</span><span class="dt">fb-survey:smoothed_cli</span><span class="st">`</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;COVID-Like Symptoms (Unweighted 7-day average)&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;fb-survey:smoothed_cli&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="co">#&gt; [1] &quot;Estimated percentage of people with COVID-like illness &quot;</span></span></code></pre></div>
+<p>These signal objects can be used directly to fetch data, without requiring us to use the <code>pub_covidcast()</code> function. Simply use the <code>$call</code> attribute of the object:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>epidata &lt;-<span class="st"> </span>covid_sources<span class="op">$</span>signals<span class="op">$</span><span class="st">`</span><span class="dt">fb-survey:smoothed_cli</span><span class="st">`</span><span class="op">$</span><span class="kw">call</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>  <span class="st">&quot;state&quot;</span>, <span class="st">&quot;pa&quot;</span>, <span class="kw">epirange</span>(<span class="dv">20210405</span>, <span class="dv">20210410</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>knitr<span class="op">::</span><span class="kw">kable</span>(epidata)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="5%"></col>
+<col width="7%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="6%"></col>
+<col width="5%"></col>
+<col width="6%"></col>
+<col width="2%"></col>
+<col width="8%"></col>
+<col width="8%"></col>
+<col width="11%"></col>
+<col width="5%"></col>
+<col width="5%"></col>
+<col width="7%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-04-05</td>
+<td align="right">NA</td>
+<td align="left">2021-04-10</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.7157576</td>
+<td align="right">0.0729992</td>
+<td align="right">10894.01</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-04-06</td>
+<td align="right">NA</td>
+<td align="left">2021-04-11</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.6932097</td>
+<td align="right">0.0708692</td>
+<td align="right">10862.01</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-04-07</td>
+<td align="right">NA</td>
+<td align="left">2021-04-12</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.6859343</td>
+<td align="right">0.0706536</td>
+<td align="right">10790.01</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-04-08</td>
+<td align="right">NA</td>
+<td align="left">2021-04-13</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.6815110</td>
+<td align="right">0.0713939</td>
+<td align="right">10731.00</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-04-09</td>
+<td align="right">NA</td>
+<td align="left">2021-04-14</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.7094162</td>
+<td align="right">0.0721616</td>
+<td align="right">10590.00</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_cli</td>
+<td align="left">fb-survey</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2021-04-10</td>
+<td align="right">NA</td>
+<td align="left">2021-04-15</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.7762399</td>
+<td align="right">0.0760370</td>
+<td align="right">10492.01</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="example-queries" class="section level2">
+<h2>Example Queries</h2>
+<div id="covidcast-main-endpoint" class="section level3">
+<h3>COVIDcast Main Endpoint</h3>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_signals.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covidcast_signals.html</a></p>
+<p>County geo_values are <a href="https://en.wikipedia.org/wiki/List_of_United_States_FIPS_codes_by_county">FIPS codes</a> and are discussed in the API docs <a href="https://cmu-delphi.github.io/delphi-epidata/api/covidcast_geography.html">here</a>. The example below is for Orange County, California.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">pub_covidcast</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_accept_covid_vaccine&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;county&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">20201221</span>, <span class="dv">20201225</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="st">&quot;06059&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 5 × 15</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a><span class="co">#&gt; 1 06059     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a><span class="co">#&gt; 2 06059     smoothed_… fb-su… county   day       2020-12-22        NA 2020-12-23</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a><span class="co">#&gt; 3 06059     smoothed_… fb-su… county   day       2020-12-23        NA 2020-12-24</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a><span class="co">#&gt; 4 06059     smoothed_… fb-su… county   day       2020-12-24        NA 2020-12-25</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a><span class="co">#&gt; # ℹ 1 more row</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;dbl&gt;, missing_value &lt;dbl&gt;, missing_stderr &lt;dbl&gt;,</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true"></a><span class="co">#&gt; #   missing_sample_size &lt;dbl&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
+<p>The <code>covidcast</code> endpoint supports <code>*</code> in its time and geo fields:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">pub_covidcast</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a>  <span class="dt">source =</span> <span class="st">&quot;fb-survey&quot;</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>  <span class="dt">signals =</span> <span class="st">&quot;smoothed_accept_covid_vaccine&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>  <span class="dt">geo_type =</span> <span class="st">&quot;county&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;day&quot;</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">20201221</span>, <span class="dv">20201225</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>  <span class="dt">geo_values =</span> <span class="st">&quot;*&quot;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a><span class="co">#&gt; # A tibble: 2,025 × 15</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a><span class="co">#&gt; 1 01000     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a><span class="co">#&gt; 2 01073     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a><span class="co">#&gt; 3 01089     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a><span class="co">#&gt; 4 01097     smoothed_… fb-su… county   day       2020-12-21        NA 2020-12-22</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a><span class="co">#&gt; # ℹ 2,021 more rows</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;dbl&gt;, missing_value &lt;dbl&gt;, missing_stderr &lt;dbl&gt;,</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a><span class="co">#&gt; #   missing_sample_size &lt;dbl&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
+</div>
+<div id="other-covid-endpoints" class="section level3">
+<h3>Other Covid Endpoints</h3>
+<div id="covid-19-hospitalization-facility-lookup" class="section level4">
+<h4>COVID-19 Hospitalization: Facility Lookup</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility_lookup.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility_lookup.html</a></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">pub_covid_hosp_facility_lookup</span>(<span class="dt">city =</span> <span class="st">&quot;southlake&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="kw">pub_covid_hosp_facility_lookup</span>(<span class="dt">state =</span> <span class="st">&quot;WY&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="co"># A non-example (there is no city called New York in Wyoming)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a><span class="kw">pub_covid_hosp_facility_lookup</span>(<span class="dt">state =</span> <span class="st">&quot;WY&quot;</span>, <span class="dt">city =</span> <span class="st">&quot;New York&quot;</span>)</span></code></pre></div>
+</div>
+<div id="covid-19-hospitalization-by-facility" class="section level4">
+<h4>COVID-19 Hospitalization by Facility</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp_facility.html</a></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">pub_covid_hosp_facility</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>  <span class="dt">hospital_pks =</span> <span class="st">&quot;100075&quot;</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>  <span class="dt">collection_weeks =</span> <span class="kw">epirange</span>(<span class="dv">20200101</span>, <span class="dv">20200501</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>)</span></code></pre></div>
+</div>
+<div id="covid-19-hospitalization-by-state" class="section level4">
+<h4>COVID-19 Hospitalization by State</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/covid_hosp.html</a></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">pub_covid_hosp_state_timeseries</span>(<span class="dt">states =</span> <span class="st">&quot;MA&quot;</span>, <span class="dt">dates =</span> <span class="st">&quot;20200510&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="flu-endpoints" class="section level3">
+<h3>Flu Endpoints</h3>
+<div id="delphis-ilinet-forecasts" class="section level4">
+<h4>Delphi’s ILINet forecasts</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/delphi.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/delphi.html</a></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a>del &lt;-<span class="st"> </span><span class="kw">pub_delphi</span>(<span class="dt">system =</span> <span class="st">&quot;ec&quot;</span>, <span class="dt">epiweek =</span> <span class="dv">201501</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a><span class="kw">names</span>(del[[1L]]<span class="op">$</span>forecast)</span></code></pre></div>
+</div>
+<div id="flusurv-hospitalization-data" class="section level4">
+<h4>FluSurv hospitalization data</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/flusurv.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/flusurv.html</a></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="kw">pub_flusurv</span>(<span class="dt">locations =</span> <span class="st">&quot;ca&quot;</span>, <span class="dt">epiweeks =</span> <span class="dv">202001</span>)</span></code></pre></div>
+</div>
+<div id="fluview-data" class="section level4">
+<h4>Fluview data</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/fluview.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/fluview.html</a></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="kw">pub_fluview</span>(<span class="dt">regions =</span> <span class="st">&quot;nat&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">201201</span>, <span class="dv">202001</span>))</span></code></pre></div>
+</div>
+<div id="fluview-virological-data-from-clinical-labs" class="section level4">
+<h4>Fluview virological data from clinical labs</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/fluview_clinical.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/fluview_clinical.html</a></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="kw">pub_fluview_clinical</span>(<span class="dt">regions =</span> <span class="st">&quot;nat&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">201601</span>, <span class="dv">201701</span>))</span></code></pre></div>
+</div>
+<div id="fluview-metadata" class="section level4">
+<h4>Fluview metadata</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/fluview_meta.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/fluview_meta.html</a></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="kw">pub_fluview_meta</span>()</span></code></pre></div>
+</div>
+<div id="google-flu-trends-data" class="section level4">
+<h4>Google Flu Trends data</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/gft.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/gft.html</a></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="kw">pub_gft</span>(<span class="dt">locations =</span> <span class="st">&quot;hhs1&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">201201</span>, <span class="dv">202001</span>))</span></code></pre></div>
+</div>
+<div id="ecdc-ili" class="section level4">
+<h4>ECDC ILI</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/ecdc_ili.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/ecdc_ili.html</a></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="kw">pub_ecdc_ili</span>(<span class="dt">regions =</span> <span class="st">&quot;Armenia&quot;</span>, <span class="dt">epiweeks =</span> <span class="dv">201840</span>)</span></code></pre></div>
+</div>
+<div id="kcdc-ili" class="section level4">
+<h4>KCDC ILI</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/kcdc_ili.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/kcdc_ili.html</a></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="kw">pub_kcdc_ili</span>(<span class="dt">regions =</span> <span class="st">&quot;ROK&quot;</span>, <span class="dt">epiweeks =</span> <span class="dv">200436</span>)</span></code></pre></div>
+</div>
+<div id="nidss-flu" class="section level4">
+<h4>NIDSS Flu</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/nidss_flu.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/nidss_flu.html</a></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="kw">pub_nidss_flu</span>(<span class="dt">regions =</span> <span class="st">&quot;taipei&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">200901</span>, <span class="dv">201301</span>))</span></code></pre></div>
+</div>
+<div id="ili-nearby-nowcast" class="section level4">
+<h4>ILI Nearby Nowcast</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/nowcast.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/nowcast.html</a></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="kw">pub_nowcast</span>(<span class="dt">locations =</span> <span class="st">&quot;ca&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">202201</span>, <span class="dv">202319</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="dengue-endpoints" class="section level3">
+<h3>Dengue Endpoints</h3>
+<div id="delphis-dengue-nowcast" class="section level4">
+<h4>Delphi’s Dengue Nowcast</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/dengue_nowcast.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/dengue_nowcast.html</a></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="kw">pub_dengue_nowcast</span>(<span class="dt">locations =</span> <span class="st">&quot;pr&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">201401</span>, <span class="dv">202301</span>))</span></code></pre></div>
+</div>
+<div id="nidss-dengue" class="section level4">
+<h4>NIDSS dengue</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/nidss_dengue.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/nidss_dengue.html</a></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="kw">pub_nidss_dengue</span>(<span class="dt">locations =</span> <span class="st">&quot;taipei&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">200301</span>, <span class="dv">201301</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="paho-dengue" class="section level3">
+<h3>PAHO Dengue</h3>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/paho_dengue.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/paho_dengue.html</a></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="kw">pub_paho_dengue</span>(<span class="dt">regions =</span> <span class="st">&quot;ca&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">200201</span>, <span class="dv">202319</span>))</span></code></pre></div>
+</div>
+<div id="other-endpoints" class="section level3">
+<h3>Other Endpoints</h3>
+<div id="wikipedia-access" class="section level4">
+<h4>Wikipedia Access</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/wiki.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/wiki.html</a></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="kw">pub_wiki</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>  <span class="dt">language =</span> <span class="st">&quot;en&quot;</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a>  <span class="dt">articles =</span> <span class="st">&quot;influenza&quot;</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;week&quot;</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">202001</span>, <span class="dv">202319</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="private-methods" class="section level3">
+<h3>Private methods</h3>
+<p>These require private access keys to use (separate from the Delphi Epidata API key). To actually run these locally, you will need to store these secrets in your <code>.Reviron</code> file, or set them as environmental variables.</p>
+<details id="private-endpoints">
+<p><summary>Usage of private endpoints</summary></p>
+<div id="cdc" class="section level4">
+<h4>CDC</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/cdc.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/cdc.html</a></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a><span class="kw">pvt_cdc</span>(<span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_CDC&quot;</span>), <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">202003</span>, <span class="dv">202304</span>), <span class="dt">locations =</span> <span class="st">&quot;ma&quot;</span>)</span></code></pre></div>
+</div>
+<div id="dengue-digital-surveillance-sensors" class="section level4">
+<h4>Dengue Digital Surveillance Sensors</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/dengue_sensors.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/dengue_sensors.html</a></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a><span class="kw">pvt_dengue_sensors</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a>  <span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_SENSORS&quot;</span>),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a>  <span class="dt">names =</span> <span class="st">&quot;ght&quot;</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a>  <span class="dt">locations =</span> <span class="st">&quot;ag&quot;</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a>  <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">201404</span>, <span class="dv">202004</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true"></a>)</span></code></pre></div>
+</div>
+<div id="google-health-trends" class="section level4">
+<h4>Google Health Trends</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/ght.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/ght.html</a></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a><span class="kw">pvt_ght</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true"></a>  <span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_GHT&quot;</span>),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true"></a>  <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">199301</span>, <span class="dv">202304</span>),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true"></a>  <span class="dt">locations =</span> <span class="st">&quot;ma&quot;</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true"></a>  <span class="dt">query =</span> <span class="st">&quot;how to get over the flu&quot;</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true"></a>)</span></code></pre></div>
+</div>
+<div id="norostat-metadata" class="section level4">
+<h4>NoroSTAT metadata</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/meta_norostat.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/meta_norostat.html</a></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a><span class="kw">pvt_meta_norostat</span>(<span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_NOROSTAT&quot;</span>))</span></code></pre></div>
+</div>
+<div id="norostat-data" class="section level4">
+<h4>NoroSTAT data</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/norostat.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/norostat.html</a></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="kw">pvt_norostat</span>(<span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_NOROSTAT&quot;</span>), <span class="dt">locations =</span> <span class="st">&quot;1&quot;</span>, <span class="dt">epiweeks =</span> <span class="dv">201233</span>)</span></code></pre></div>
+</div>
+<div id="quidel-influenza-testing" class="section level4">
+<h4>Quidel Influenza testing</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/quidel.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/quidel.html</a></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a><span class="kw">pvt_quidel</span>(<span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_QUIDEL&quot;</span>), <span class="dt">locations =</span> <span class="st">&quot;hhs1&quot;</span>, <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">200301</span>, <span class="dv">202105</span>))</span></code></pre></div>
+</div>
+<div id="sensors" class="section level4">
+<h4>Sensors</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/sensors.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/sensors.html</a></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true"></a><span class="kw">pvt_sensors</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true"></a>  <span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_SENSORS&quot;</span>),</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true"></a>  <span class="dt">names =</span> <span class="st">&quot;sar3&quot;</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true"></a>  <span class="dt">locations =</span> <span class="st">&quot;nat&quot;</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true"></a>  <span class="dt">epiweeks =</span> <span class="kw">epirange</span>(<span class="dv">200301</span>, <span class="dv">202105</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true"></a>)</span></code></pre></div>
+</div>
+<div id="twitter" class="section level4">
+<h4>Twitter</h4>
+<p>API docs: <a href="https://cmu-delphi.github.io/delphi-epidata/api/twitter.html" class="uri">https://cmu-delphi.github.io/delphi-epidata/api/twitter.html</a></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a><span class="kw">pvt_twitter</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a>  <span class="dt">auth =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;SECRET_API_AUTH_TWITTER&quot;</span>),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true"></a>  <span class="dt">locations =</span> <span class="st">&quot;nat&quot;</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true"></a>  <span class="dt">time_type =</span> <span class="st">&quot;week&quot;</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true"></a>  <span class="dt">time_values =</span> <span class="kw">epirange</span>(<span class="dv">200301</span>, <span class="dv">202105</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true"></a>)</span></code></pre></div>
+</details>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
