@@ -22,7 +22,12 @@ format_list <- function(values) {
 #'
 #' @keywords internal
 check_is_recent <- function(dates, max_age) {
-  (!is.null(dates) && any(dates >= format(Sys.Date() - max_age, format = "%Y%m%d")))
+  if (inherits(dates, "Date")) {
+    threshold <- Sys.Date() - max_age
+  } else {
+    threshold <- format(Sys.Date() - max_age, format = "%Y%m%d")
+  }
+  (!is.null(dates) && any(dates >= threshold))
 }
 
 #' helper that checks whether a call is actually cachable
@@ -65,5 +70,10 @@ get_wildcard_equivalent_dates <- function(time_value, time_type = c("day", "week
 #' inserts each string as a bullet at the end of the "Prepare for release" section
 #' @keywords internal
 release_bullets <- function() {
-  c("merge to main")
+  c(
+    "merge to main",
+    "don't use_version('patch') in the next section",
+    "`use_version('patch')` is redundant because we do this in PRs",
+    "`use_dev_version` is also redundant."
+  )
 }

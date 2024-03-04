@@ -1,7 +1,7 @@
 Package: epidatr
 Type: Package
 Title: Client for Delphi's 'Epidata' API
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: 
   c(
     person("Logan", "Brooks", email = "lcbrooks@andrew.cmu.edu", role = c("aut")),
@@ -36,7 +36,7 @@ Collate: 'auth.R' 'avail_endpoints.R' 'cache.R' 'check.R' 'constants.R'
         'covidcast.R' 'endpoints.R' 'epidatacall.R' 'epidatr-package.R'
         'model.R' 'request.R' 'utils-pipe.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2024-02-27 20:20:56 UTC; dsweber
+Packaged: 2024-03-02 01:36:04 UTC; dsweber
 Author: Logan Brooks [aut],
   Dmitry Shemetov [aut],
   Samuel Gratzl [aut],
@@ -49,4 +49,4 @@ Author: Logan Brooks [aut],
   Kathryn Mazaitis [ctb]
 Maintainer: David Weber <davidweb@andrew.cmu.edu>
 Repository: CRAN
-Date/Publication: 2024-03-01 00:02:39 UTC
+Date/Publication: 2024-03-04 19:30:05 UTC
