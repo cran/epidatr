@@ -1,13 +1,14 @@
 Package: epidatr
 Type: Package
 Title: Client for Delphi's 'Epidata' API
-Version: 1.1.1
+Version: 1.2.0
 Authors@R: 
   c(
     person("Logan", "Brooks", email = "lcbrooks@andrew.cmu.edu", role = c("aut")),
     person("Dmitry", "Shemetov", email = "dshemeto@andrew.cmu.edu", role = c("aut")),
     person("Samuel", "Gratzl", email = "sam@sgratzl.com", role = c("aut")),
     person("David", "Weber", email = "davidweb@andrew.cmu.edu", role = c("ctb", "cre")),
+    person("Nat", "DeFries", role = c("ctb")),
     person("Alex", "Reinhart", role = c("ctb")),
     person("Daniel", "McDonald", role = c("ctb")),
     person("Kean Ming", "Tan", role = c("ctb")),
@@ -36,11 +37,12 @@ Collate: 'auth.R' 'avail_endpoints.R' 'cache.R' 'check.R' 'constants.R'
         'covidcast.R' 'endpoints.R' 'epidatacall.R' 'epidatr-package.R'
         'model.R' 'request.R' 'utils-pipe.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2024-03-02 01:36:04 UTC; dsweber
+Packaged: 2024-06-20 18:52:22 UTC; dsweber
 Author: Logan Brooks [aut],
   Dmitry Shemetov [aut],
   Samuel Gratzl [aut],
   David Weber [ctb, cre],
+  Nat DeFries [ctb],
   Alex Reinhart [ctb],
   Daniel McDonald [ctb],
   Kean Ming Tan [ctb],
@@ -49,4 +51,4 @@ Author: Logan Brooks [aut],
   Kathryn Mazaitis [ctb]
 Maintainer: David Weber <davidweb@andrew.cmu.edu>
 Repository: CRAN
-Date/Publication: 2024-03-04 19:30:05 UTC
+Date/Publication: 2024-06-20 19:10:02 UTC
