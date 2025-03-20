@@ -19,54 +19,41 @@ epidata <- pub_covidcast(
 knitr::kable(head(epidata))
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  # Obtain the most up-to-date version of the smoothed covid-like illness (CLI)
-#  # signal from the COVID-19 Trends and Impact survey for all states
-#  pub_covidcast(
-#    source = "fb-survey",
-#    signals = "smoothed_cli",
-#    geo_type = "state",
-#    time_type = "day",
-#    geo_values = "*",
-#    time_values = epirange(20210105, 20210410)
-#  )
+# # Obtain the most up-to-date version of the smoothed covid-like illness (CLI)
+# # signal from the COVID-19 Trends and Impact survey for all states
+# pub_covidcast(
+#   source = "fb-survey",
+#   signals = "smoothed_cli",
+#   geo_type = "state",
+#   time_type = "day",
+#   geo_values = "*",
+#   time_values = epirange(20210105, 20210410)
+# )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  # Obtain the most up-to-date version of the smoothed covid-like illness (CLI)
-#  # signal from the COVID-19 Trends and Impact survey for Pennsylvania
-#  pub_covidcast(
-#    source = "fb-survey",
-#    signals = "smoothed_cli",
-#    geo_type = "state",
-#    time_type = "day",
-#    geo_values = c("pa", "ca", "fl"),
-#    time_values = epirange(20210105, 20210410)
-#  )
-
-## -----------------------------------------------------------------------------
-# Obtain the most up-to-date version of the smoothed covid-like illness (CLI)
-# signal from the COVID-19 Trends and Impact survey for Pennsylvania
-epidata <- pub_covidcast(
-  source = "fb-survey",
-  signals = "smoothed_cli",
-  geo_type = "state",
-  time_type = "day",
-  geo_values = "pa",
-  time_values = epirange(20210105, 20210410)
-)
-knitr::kable(head(epidata))
+# # Obtain the most up-to-date version of the smoothed covid-like illness (CLI)
+# # signal from the COVID-19 Trends and Impact survey for Pennsylvania
+# pub_covidcast(
+#   source = "fb-survey",
+#   signals = "smoothed_cli",
+#   geo_type = "state",
+#   time_type = "day",
+#   geo_values = c("pa", "ca", "fl"),
+#   time_values = "*"
+# )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  # Obtain the smoothed covid-like illness (CLI) signal from the COVID-19
-#  # Trends and Impact survey for Pennsylvania as it was on 2021-06-01
-#  pub_covidcast(
-#    source = "fb-survey",
-#    signals = "smoothed_cli",
-#    geo_type = "state",
-#    time_type = "day",
-#    geo_values = "pa",
-#    time_values = epirange(20210105, 20210410),
-#    as_of = "2021-06-01"
-#  )
+# # Obtain the smoothed covid-like illness (CLI) signal from the COVID-19
+# # Trends and Impact survey for Pennsylvania as it was on 2021-06-01
+# pub_covidcast(
+#   source = "fb-survey",
+#   signals = "smoothed_cli",
+#   geo_type = "state",
+#   time_type = "day",
+#   geo_values = "pa",
+#   time_values = epirange(20210105, 20210410),
+#   as_of = "2021-06-01"
+# )
 
 ## ----out.height="65%"---------------------------------------------------------
 library(ggplot2)
@@ -121,7 +108,7 @@ ggplot(cli_states, aes(x = long, y = lat, group = group, fill = value)) +
   )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  avail_endpoints()
+# avail_endpoints()
 
 ## ----echo = FALSE-------------------------------------------------------------
 invisible(capture.output(endpts <- avail_endpoints()))

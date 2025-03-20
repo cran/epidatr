@@ -40,15 +40,15 @@ epidata <- pub_covidcast(
 knitr::kable(epidata)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  pub_covidcast(
-#    source = "doctor-visits",
-#    signals = "smoothed_adj_cli",
-#    time_type = "day",
-#    time_values = epirange("2020-05-01", "2020-05-01"),
-#    geo_type = "state",
-#    geo_values = "pa",
-#    issues = c("2020-05-07", "2020-05-09", "2020-05-15")
-#  )
+# pub_covidcast(
+#   source = "doctor-visits",
+#   signals = "smoothed_adj_cli",
+#   time_type = "day",
+#   time_values = epirange("2020-05-01", "2020-05-01"),
+#   geo_type = "state",
+#   geo_values = "pa",
+#   issues = c("2020-05-07", "2020-05-09", "2020-05-15")
+# )
 
 ## -----------------------------------------------------------------------------
 epidata <- pub_covidcast(
