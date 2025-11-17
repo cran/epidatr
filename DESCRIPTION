@@ -1,7 +1,7 @@
 Type: Package
 Package: epidatr
 Title: Client for Delphi's 'Epidata' API
-Version: 1.2.1
+Version: 1.2.2
 Authors@R: c(
     person("Logan", "Brooks", , "lcbrooks@andrew.cmu.edu", role = "aut"),
     person("Dmitry", "Shemetov", , "dshemeto@andrew.cmu.edu", role = "aut"),
@@ -32,21 +32,21 @@ URL: https://cmu-delphi.github.io/epidatr/,
 BugReports: https://github.com/cmu-delphi/epidatr/issues
 Depends: R (>= 3.5.0)
 Imports: cachem, checkmate, cli, glue, httr, jsonlite, magrittr,
-        MMWRweek, openssl, purrr, rappdirs, readr, rlang, tibble,
-        usethis, xml2
-Suggests: dplyr, ggplot2, knitr, mapproj, maps, rmarkdown, testthat (>=
-        3.1.5), withr
+        MMWRweek, openssl, purrr, rappdirs, rlang, tibble, usethis,
+        xml2
+Suggests: dplyr, ggplot2, knitr, mapproj, maps, readr, rmarkdown,
+        testthat (>= 3.1.5), withr
 VignetteBuilder: knitr
 Config/Needs/website: cmu-delphi/delphidocs
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Collate: 'auth.R' 'avail_endpoints.R' 'cache.R' 'check.R' 'constants.R'
         'covidcast.R' 'endpoints.R' 'epidatacall.R' 'epidatr-package.R'
         'model.R' 'request.R' 'utils-pipe.R' 'utils.R'
 NeedsCompilation: no
-Packaged: 2025-03-20 18:43:51 UTC; dsweber
+Packaged: 2025-11-17 15:40:32 UTC; dsweber
 Author: Logan Brooks [aut],
   Dmitry Shemetov [aut],
   Samuel Gratzl [aut],
@@ -60,4 +60,4 @@ Author: Logan Brooks [aut],
   Kathryn Mazaitis [ctb]
 Maintainer: David Weber <davidweb@andrew.cmu.edu>
 Repository: CRAN
-Date/Publication: 2025-03-20 19:00:02 UTC
+Date/Publication: 2025-11-17 18:20:02 UTC
