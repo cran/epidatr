@@ -380,6 +380,63 @@ specific date, using the <code>as_of</code> argument:</p>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="at">as_of =</span> <span class="st">&quot;2020-05-07&quot;</span></span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>)</span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(epidata)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="9%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="2%" />
+<col width="8%" />
+<col width="8%" />
+<col width="11%" />
+<col width="5%" />
+<col width="4%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-07</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">2.581509</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 <p>This shows that an estimate of about 2.3% was issued on May 7. If we
 don’t specify <code>as_of</code>, we get the most recent estimate
 available:</p>
@@ -392,6 +449,63 @@ available:</p>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;pa&quot;</span></span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>)</span>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(epidata)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="9%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="2%" />
+<col width="8%" />
+<col width="8%" />
+<col width="11%" />
+<col width="5%" />
+<col width="4%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-07-04</td>
+<td align="right">64</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">5.973572</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 <p>Note the substantial change in the estimate, from less than 3% to
 almost 6%, reflecting new data that became available after May 7 about
 visits <em>occurring on</em> May 1. This illustrates the importance of
@@ -414,6 +528,165 @@ in a certain time period:</p>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">issues =</span> <span class="fu">epirange</span>(<span class="st">&quot;2020-05-01&quot;</span>, <span class="st">&quot;2020-05-15&quot;</span>)</span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>)</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(epidata)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="9%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="2%" />
+<col width="8%" />
+<col width="8%" />
+<col width="11%" />
+<col width="5%" />
+<col width="4%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-07</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">2.581509</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-08</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.278896</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-09</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.321781</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-12</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.588683</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-13</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.631978</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-14</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.658009</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-15</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.662286</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 <p>This estimate was clearly updated many times as new data for May 1st
 arrived.</p>
 <p>Note that these results include only data issued or updated between
@@ -429,7 +702,15 @@ arrived.</p>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;pa&quot;</span>,</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">issues =</span> <span class="fu">c</span>(<span class="st">&quot;2020-05-07&quot;</span>, <span class="st">&quot;2020-05-09&quot;</span>, <span class="st">&quot;2020-05-15&quot;</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 15</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; 1 pa        smoothed_… docto… state    day       2020-05-01        NA 2020-05-07</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; 2 pa        smoothed_… docto… state    day       2020-05-01        NA 2020-05-09</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; 3 pa        smoothed_… docto… state    day       2020-05-01        NA 2020-05-15</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;dbl&gt;, missing_value &lt;dbl&gt;, missing_stderr &lt;dbl&gt;,</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;dbl&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
 </div>
 <div id="observations-issued-with-a-specific-lag" class="section level3">
 <h3>Observations issued with a specific lag</h3>
@@ -447,6 +728,131 @@ days fetches only data issued exactly 7 days after the corresponding
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">lag =</span> <span class="dv">7</span></span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>)</span>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(epidata)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="9%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="2%" />
+<col width="8%" />
+<col width="8%" />
+<col width="11%" />
+<col width="5%" />
+<col width="4%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-01</td>
+<td align="right">NA</td>
+<td align="left">2020-05-08</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.278896</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-02</td>
+<td align="right">NA</td>
+<td align="left">2020-05-09</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.225292</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-05</td>
+<td align="right">NA</td>
+<td align="left">2020-05-12</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">2.779908</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-06</td>
+<td align="right">NA</td>
+<td align="left">2020-05-13</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">2.557698</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-07</td>
+<td align="right">NA</td>
+<td align="left">2020-05-14</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">2.191677</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 <p>Note that though this query requested all values between 2020-05-01
 and 2020-05-07, May 3rd and May 4th were <em>not</em> included in the
 results set. This is because the query will only include a result for
@@ -462,6 +868,131 @@ the value was not updated on that day:</p>
 <span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">issues =</span> <span class="fu">epirange</span>(<span class="st">&quot;2020-05-09&quot;</span>, <span class="st">&quot;2020-05-15&quot;</span>)</span>
 <span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>)</span>
 <span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(epidata)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="9%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="2%" />
+<col width="8%" />
+<col width="8%" />
+<col width="11%" />
+<col width="5%" />
+<col width="4%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">geo_value</th>
+<th align="left">signal</th>
+<th align="left">source</th>
+<th align="left">geo_type</th>
+<th align="left">time_type</th>
+<th align="left">time_value</th>
+<th align="right">direction</th>
+<th align="left">issue</th>
+<th align="right">lag</th>
+<th align="right">missing_value</th>
+<th align="right">missing_stderr</th>
+<th align="right">missing_sample_size</th>
+<th align="right">value</th>
+<th align="right">stderr</th>
+<th align="right">sample_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-03</td>
+<td align="right">NA</td>
+<td align="left">2020-05-09</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">2.788618</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-03</td>
+<td align="right">NA</td>
+<td align="left">2020-05-12</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.015368</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-03</td>
+<td align="right">NA</td>
+<td align="left">2020-05-13</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.039310</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-03</td>
+<td align="right">NA</td>
+<td align="left">2020-05-14</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.021245</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">pa</td>
+<td align="left">smoothed_adj_cli</td>
+<td align="left">doctor-visits</td>
+<td align="left">state</td>
+<td align="left">day</td>
+<td align="left">2020-05-03</td>
+<td align="right">NA</td>
+<td align="left">2020-05-15</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">3.048725</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
