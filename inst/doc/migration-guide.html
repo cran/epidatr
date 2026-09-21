@@ -12,7 +12,7 @@
 
 
 
-<title>Migrating from pub_covidcast to the new Epidata API</title>
+<title>V3/V4 to V5 Migration Guide</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -346,227 +346,359 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Migrating from pub_covidcast to the new
-Epidata API</h1>
+<h1 class="title toc-ignore">V3/V4 to V5 Migration Guide</h1>
 
 
 
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(epidatr)</span></code></pre></div>
 </details>
-<p>The Delphi Epidata API is moving from its V4 endpoints
-(<code>pub_covidcast()</code> and other <code>{pub/pvt}_*</code>
-endpoints, such as <code>pub_fluview()</code>,
-<code>pub_flusurv()</code>, and <code>pvt_quidel()</code>) to a new set
-of V5 endpoints, served by <code>epidata_snapshot()</code>,
-<code>epidata_archive()</code>, and <code>epidata_meta()</code>. The
-transition is in progress: sources are moving to the new API one at a
-time, and the V4 functions still work for sources that have not moved
-yet. New analyses should start with the new functions and fall back to a
-V4 function only when a source is not yet available there.</p>
+<p>The legacy Epidata APIs, including the V4 main endpoint
+(<code>pub_covidcast()</code>) and V3 other endpoints
+(<code>pub_fluview()</code>, <code>pub_flusurv()</code>,
+<code>pub_wiki()</code>, etc.), are transitioning to the V5 API. This
+transition is occurring source by source. All V3 and V4 sources will
+continue to operate until the migration is complete (tentatively
+scheduled for October 2026), and endpoints that are no longer updated
+will remain accessible on V3/V4. For new integrations, start directly on
+V5 and fall back to legacy endpoints only for sources that are not yet
+supported.</p>
 <p>For the current list of sources and indicators available on the new
 API, see the <a href="https://cmu-delphi.github.io/delphi-epidata/api/v5_signals.html">V5
 signals documentation</a>.</p>
-<p>This guide walks through <code>pub_covidcast()</code>’s arguments and
-columns in detail, since it’s the most widely used V4 endpoint, but the
-mapping is the same for the other <code>{pub/pvt}_*</code>
-endpoints.</p>
-<div id="function-mapping" class="section level2">
-<h2>Function mapping</h2>
+<p>This guide walks through the transition from
+<code>pub_covidcast()</code> and other legacy endpoints. While
+<code>pub_covidcast()</code> is the most widely used legacy endpoint, V3
+endpoints differ in their function names and parameter conventions. The
+tables below compare both V4 (<code>pub_covidcast()</code>) and V3
+(using <code>pub_fluview()</code> as an example) to their V5
+equivalents.</p>
+<div id="endpoint-mapping" class="section level2">
+<h2>Endpoint mapping</h2>
+<p>The legacy endpoints split into several purpose-built V5 routes
+determined by query type. The “V3 (Other Endpoints)” column highlights
+examples (<code>pub_fluview()</code>, <code>pub_flusurv()</code>,
+<code>pub_wiki()</code>) to illustrate differences across endpoints.
+Refer to each endpoint’s documentation for specific behavior:</p>
 <table>
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th>Old</th>
-<th>New</th>
-<th>Purpose</th>
+<th>Task</th>
+<th>V4 (<code>pub_covidcast</code>)</th>
+<th>V3 (Other Endpoints)</th>
+<th>V5 Equivalent</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>pub_covidcast()</code></td>
+<td>Fetch latest data or snapshot as of a past date</td>
+<td><code>pub_covidcast()</code> (default or with
+<code>as_of</code>)</td>
+<td>Endpoint-specific (<code>pub_fluview()</code> has no
+<code>as_of</code>)</td>
 <td><code>epidata_snapshot()</code></td>
-<td>Data as it appeared on a given date (or the latest)</td>
 </tr>
 <tr class="even">
+<td>Fetch full revision history for a signal</td>
 <td><code>pub_covidcast(issues = ...)</code></td>
+<td>Supported by some (<code>pub_fluview()</code>,
+<code>pub_flusurv()</code> with <code>issues</code>)</td>
 <td><code>epidata_archive()</code></td>
-<td>Full revision history of a signal</td>
 </tr>
 <tr class="odd">
+<td>Discover sources, signals, geo types, and date ranges</td>
 <td><code>pub_covidcast_meta()</code>,
 <code>covidcast_epidata()</code></td>
+<td>Shared meta for some (<code>pub_fluview_meta()</code>)</td>
 <td><code>epidata_meta()</code></td>
-<td>Discover sources, signals, geo types, and date ranges</td>
+</tr>
+<tr class="even">
+<td>Access source-specific auxiliary tables</td>
+<td>none</td>
+<td>none</td>
+<td><code>epidata_aux()</code></td>
+</tr>
+<tr class="odd">
+<td>Filter by publication lag</td>
+<td><code>pub_covidcast(lag = ...)</code></td>
+<td>Supported by some (<code>pub_fluview()</code>,
+<code>pub_flusurv()</code>)</td>
+<td>none (compute <code>report_time - reference_time</code>)</td>
 </tr>
 </tbody>
 </table>
 <p><code>epidata()</code> is a convenience wrapper that routes to
-<code>epidata_snapshot()</code> or <code>epidata_archive()</code> based
-on which versioning argument you pass.</p>
+<code>epidata_archive()</code> if you pass <code>report_time</code>, or
+to <code>epidata_snapshot()</code> if you pass
+<code>snapshot_date</code> (or neither).</p>
 </div>
 <div id="argument-changes" class="section level2">
 <h2>Argument changes</h2>
+<p>Most <code>pub_covidcast()</code> arguments carry over to V5 with the
+same name, but some have been renamed, dropped, or added. Historical V3
+endpoints do not share argument names with <code>pub_covidcast()</code>.
+Arguments for <code>pub_fluview()</code> are shown below as an example,
+but consult each endpoint’s documentation for details:</p>
 <table>
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th><code>pub_covidcast()</code> argument</th>
-<th>New argument</th>
+<th>V4 argument (<code>pub_covidcast</code>)</th>
+<th>V3 (<code>pub_fluview</code>)</th>
+<th>V5 argument</th>
 <th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>source</code>, <code>signals</code>, <code>geo_type</code>,
-<code>geo_values</code></td>
-<td>same</td>
-<td></td>
+<td><code>source</code> (<code>data_source</code>)</td>
+<td>not exposed (identified by function name
+<code>pub_fluview()</code>)</td>
+<td><code>source</code></td>
+<td>Identifies the source dataset in V5 (replaces V4 <code>source</code>
+and V3 endpoint names).</td>
 </tr>
 <tr class="even">
-<td><code>time_type</code></td>
-<td>none</td>
-<td>Dropped. Times in the new API are always <code>Date</code>s.</td>
+<td><code>signals</code></td>
+<td>none (implicit from endpoint)</td>
+<td><code>signals</code></td>
+<td>Identifies the specific signal name within the source.</td>
 </tr>
 <tr class="odd">
-<td><code>time_values</code></td>
-<td><code>reference_time</code></td>
-<td>Accepts dates or <code>epirange()</code>. Filtered locally after the
+<td><code>geo_type</code></td>
+<td>not exposed (<code>pub_fluview()</code> supports only
+<code>regions</code>)</td>
+<td><code>geo_type</code></td>
+<td>Specifies geographic resolution (e.g., <code>state</code>,
+<code>county</code>, <code>hhs</code>, <code>nation</code>).</td>
+</tr>
+<tr class="even">
+<td><code>geo_values</code></td>
+<td><code>regions</code> for <code>pub_fluview()</code></td>
+<td><code>geo_values</code></td>
+<td>Removed from API query in V5 (queries return all locations for the
+requested <code>geo_type</code>). Filtered locally in R after the
 fetch.</td>
 </tr>
+<tr class="odd">
+<td><code>time_type</code></td>
+<td>not exposed (<code>pub_fluview()</code> is always
+<code>epiweeks</code>)</td>
+<td>none</td>
+<td>Dropped. All V5 endpoints use standard calendar dates
+(<code>Date</code>).</td>
+</tr>
 <tr class="even">
-<td><code>as_of</code></td>
-<td><code>snapshot_date</code></td>
-<td><code>epidata_snapshot()</code> only. <code>NULL</code> returns the
-latest data.</td>
+<td><code>time_values</code></td>
+<td><code>epiweeks</code> for <code>pub_fluview()</code></td>
+<td><code>reference_time</code></td>
+<td>Removed from API query in V5 (queries return all dates). Filtered
+locally in R after the fetch.</td>
 </tr>
 <tr class="odd">
-<td><code>issues</code></td>
-<td><code>report_time</code></td>
-<td><code>epidata_archive()</code> only. Accepts exact dates, operators
-like <code>&quot;&lt;2025-10-16&quot;</code>, or <code>epirange()</code>.</td>
+<td><code>as_of</code></td>
+<td>none (<code>pub_fluview()</code> has no <code>as_of</code>)</td>
+<td><code>snapshot_date</code></td>
+<td>In V5, used only in <code>epidata_snapshot()</code> to fetch data
+known as of a past date. <code>NULL</code> returns the latest data.</td>
 </tr>
 <tr class="even">
+<td><code>issues</code></td>
+<td><code>issues</code> (where supported)</td>
+<td><code>report_time</code></td>
+<td>In V5, used only in <code>epidata_archive()</code>. Accepts
+operators like <code>&quot;&lt;2025-10-16&gt;&quot;</code>, or
+<code>epirange()</code>. (For a single date, use
+<code>epidata_snapshot()</code>).</td>
+</tr>
+<tr class="odd">
 <td><code>lag</code></td>
+<td><code>lag</code> (where supported)</td>
 <td>none</td>
-<td>Compute it yourself: <code>report_time - reference_time</code>.</td>
+<td>Removed in V5. You can compute it yourself: fetch from
+<code>epidata_archive()</code> and filter by
+<code>report_time - reference_time</code>. See <a href="#lag">filtering
+by lag</a>.</td>
+</tr>
+<tr class="even">
+<td>none</td>
+<td>none</td>
+<td><code>fill_method</code></td>
+<td>New in V5. Selects the imputation method when aggregating
+sub-geographies (<code>&quot;source&quot;</code>, <code>&quot;fill_ave&quot;</code>, or
+<code>&quot;fill_zero&quot;</code>). See <a href="#fill-method">below</a>.</td>
+</tr>
+<tr class="odd">
+<td>none</td>
+<td>none</td>
+<td><code>...</code></td>
+<td>New in V5. Filters on source-specific dimensions (such as
+<code>age_group</code> or <code>nwss_source</code>).</td>
 </tr>
 </tbody>
 </table>
+<p><a id="fill-method"></a></p>
 <p>The new functions also add <code>fill_method</code>, which has no
 covidcast equivalent. Some sources publish several variants of the same
 signal that differ in how nulls were handled during geographic
-aggregation: <code>&quot;source&quot;</code> (raw source data, no imputation),
-<code>&quot;fill_ave&quot;</code> (nulls filled with the average of neighboring
-values), and <code>&quot;fill_zero&quot;</code> (nulls filled with zero). The
-default <code>NULL</code> returns all variants, so filter on this column
-(or pass the argument) if you want exactly one time series per
-location.</p>
+aggregation:</p>
+<ul>
+<li><code>&quot;source&quot;</code> is the raw source data, with no
+imputation</li>
+<li><code>&quot;fill_ave&quot;</code> has null values filled with the average of
+neighboring values</li>
+<li><code>&quot;fill_zero&quot;</code> has null values filled with zero</li>
+</ul>
+<p>The default <code>NULL</code> returns all variants, so filter on this
+column (or pass a value to the argument) if you want exactly one time
+series per location.</p>
 </div>
 <div id="column-changes" class="section level2">
 <h2>Column changes</h2>
+<p>Response fields follow a similar pattern. In the table below,
+<code>pub_fluview()</code> serves as an example of an endpoint with
+custom fields. Column names vary across legacy endpoints (for example,
+<code>pub_wiki()</code> returns <code>article</code>,
+<code>count</code>, and <code>hour</code>):</p>
 <table>
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th><code>pub_covidcast()</code> column</th>
-<th>New column</th>
+<th>V4 column (<code>pub_covidcast</code>)</th>
+<th>V3 (<code>pub_fluview</code>)</th>
+<th>V5 column</th>
 <th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>geo_value</code>, <code>geo_type</code>, <code>signal</code>,
-<code>value</code></td>
-<td>same</td>
-<td></td>
+<td><code>source</code></td>
+<td>not returned (implicit from endpoint)</td>
+<td>dropped</td>
+<td>Omitted in V5 responses because the source is already specified in
+the request.</td>
+</tr>
+<tr class="even">
+<td><code>signal</code></td>
+<td>none (implicit from endpoint)</td>
+<td><code>signal</code></td>
+<td>Identifies the signal name in V5.</td>
+</tr>
+<tr class="odd">
+<td><code>value</code></td>
+<td>Endpoint-specific columns (e.g. <code>num_ili</code>,
+<code>wili</code>, <code>ili</code>)</td>
+<td><code>value</code></td>
+<td>Standardized metric value column across all V5 sources.</td>
+</tr>
+<tr class="even">
+<td>not returned</td>
+<td>not returned (implicit from endpoint)</td>
+<td><code>geo_type</code></td>
+<td>Explicitly included in V5 responses to identify geographic
+resolution.</td>
+</tr>
+<tr class="odd">
+<td><code>geo_value</code></td>
+<td><code>region</code> for <code>pub_fluview()</code></td>
+<td><code>geo_value</code></td>
+<td>Standardized location identifier across all V5 responses.</td>
 </tr>
 <tr class="even">
 <td><code>time_value</code></td>
+<td><code>epiweek</code> for <code>pub_fluview()</code></td>
 <td><code>reference_time</code></td>
-<td>The date the value describes. Always a <code>Date</code>.</td>
+<td>Standardized date in <code>YYYY-MM-DD</code> format representing the
+observation period.</td>
 </tr>
 <tr class="odd">
 <td><code>issue</code></td>
+<td><code>issue</code> (where returned)</td>
 <td><code>report_time</code></td>
-<td>The date the value was published. Present in both snapshot and
-archive output.</td>
-</tr>
-<tr class="even">
-<td><code>source</code></td>
-<td>dropped</td>
-<td>You queried by source; add it back with <code>dplyr::mutate()</code>
-if you bind rows across sources.</td>
-</tr>
-<tr class="odd">
-<td><code>time_type</code></td>
-<td>dropped</td>
-<td>No longer needed since times are <code>Date</code>s.</td>
+<td>Standardized date in <code>YYYY-MM-DD</code> format representing
+when the data point was published. Present in both snapshot and archive
+output.</td>
 </tr>
 <tr class="even">
 <td><code>lag</code></td>
+<td><code>lag</code> (where returned)</td>
 <td>dropped</td>
-<td>Compute as <code>report_time - reference_time</code>.</td>
+<td>Omitted in V5 responses. You can compute it yourself as
+<code>report_time - reference_time</code>. See <a href="https://cmu-delphi.github.io/epidatr/articles/versioned-data.html#calculating-reporting-lag">calculating
+reporting lag</a>.</td>
 </tr>
 <tr class="odd">
 <td><code>direction</code></td>
+<td>none</td>
 <td>dropped</td>
-<td>Was already deprecated in the covidcast API.</td>
+<td>Deprecated in V4 and dropped in V5.</td>
 </tr>
 <tr class="even">
 <td><code>stderr</code>, <code>sample_size</code></td>
+<td>none</td>
 <td><code>ci_lower</code>, <code>ci_upper</code></td>
-<td>Uncertainty is now expressed as confidence interval bounds on
-<code>value</code> instead of a standard error. Populated only for
-sources that publish them. See below.</td>
+<td>Expresses uncertainty as explicit confidence interval bounds on
+<code>value</code> when provided by the data source. See <a href="#uncertainty-columns">Uncertainty columns</a> below.</td>
 </tr>
 <tr class="odd">
 <td><code>missing_value</code>, <code>missing_stderr</code>,
 <code>missing_sample_size</code></td>
+<td>none</td>
 <td>dropped</td>
-<td>Missingness is now expressed through <code>fill_method</code>
-variants and plain <code>NA</code>s.</td>
+<td>Replaced in V5 by <code>fill_method</code> variants and plain
+<code>NA</code>s in <code>value</code>.</td>
 </tr>
 <tr class="even">
 <td>none</td>
+<td>none</td>
 <td><code>fill_method</code></td>
-<td>Which null-handling variant of the signal this row belongs to. See
-above.</td>
+<td>Indicates which null-handling imputation method was applied
+(<code>&quot;source&quot;</code>, <code>&quot;fill_ave&quot;</code>, or
+<code>&quot;fill_zero&quot;</code>). See <a href="#fill-method">above</a>.</td>
 </tr>
 </tbody>
 </table>
 <p>Some sources also carry extra columns in the new API, for example
-<code>age_group</code> (pophive) and <code>nwss_source</code>,
-<code>sample_index</code>, <code>pcr_target</code> (nwss).</p>
+<code>age_group</code> (<a href="https://cmu-delphi.github.io/delphi-epidata/api/v5-signals/epic-cosmos.html">pophive</a>)
+and <code>nwss_source</code>, <code>sample_index</code>,
+<code>pcr_target</code> (<a href="https://cmu-delphi.github.io/delphi-epidata/api/v5-signals/nwss.html">nwss</a>).
+For more information on whether the source you’re interested in provides
+extra columns, please visit that source’s documentation page.</p>
 <div id="uncertainty-columns" class="section level3">
 <h3>Uncertainty columns</h3>
 <p>The covidcast columns <code>stderr</code> and
 <code>sample_size</code> have no fixed replacement. The shared schema
 carries only <code>value</code>; a source that quantifies uncertainty
 adds its own columns, such as <code>ci_lower</code> and
-<code>ci_upper</code>. Use the metadata or the <a href="https://cmu-delphi.github.io/delphi-epidata/api/v5_signals.html">documentation</a>
+<code>ci_upper</code>. Use the metadata function or the <a href="https://cmu-delphi.github.io/delphi-epidata/api/v5_signals.html">documentation</a>
 to see which value columns a source returns:</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>meta_sleepcycle <span class="ot">&lt;-</span> <span class="fu">epidata_meta</span>(<span class="at">source =</span> <span class="st">&quot;sleepcycle&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>meta_sleepcycle<span class="sc">$</span>sleepcycle<span class="sc">$</span>value_columns</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>meta_sleepcycle<span class="sc">$</span>value_columns</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ci_lower&quot; &quot;ci_upper&quot; &quot;value&quot;</span></span></code></pre></div>
 </details>
 </div>
 </div>
 <div id="a-query-before-and-after" class="section level2">
 <h2>A query, before and after</h2>
+<div id="v4-query-example-nssp-covidcast" class="section level3">
+<h3>V4 query example: NSSP COVIDcast</h3>
 <p>Fetching NSSP influenza ED visit percentages for two states, as the
 data looked on January 1, 2025:</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
@@ -579,18 +711,24 @@ data looked on January 1, 2025:</p>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">time_values =</span> <span class="fu">epirange</span>(<span class="dv">202440</span>, <span class="dv">202501</span>),</span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">as_of =</span> <span class="dv">20250101</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>)</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="fu">head</span>(old)</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 15</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 1 ca        pct_ed_vi… nssp   state    week      2024-09-29        NA 2026-08-23</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 2 pa        pct_ed_vi… nssp   state    week      2024-09-29        NA 2026-08-23</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 3 ca        pct_ed_vi… nssp   state    week      2024-10-06        NA 2026-08-23</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; 4 pa        pct_ed_vi… nssp   state    week      2024-10-06        NA 2026-08-23</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; 5 ca        pct_ed_vi… nssp   state    week      2024-10-13        NA 2026-08-23</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; 6 pa        pct_ed_vi… nssp   state    week      2024-10-13        NA 2026-08-23</span></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;dbl&gt;, missing_value &lt;dbl&gt;, missing_stderr &lt;dbl&gt;,</span></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;dbl&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; Warning: `pub_covidcast()` uses the V4 Epidata API.</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; ℹ Starting in October 2026, V4 is tentatively deprecated in favor of the V5 API.</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; ℹ See `vignette(&quot;migration-guide&quot;)` (or</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;   &lt;https://cmu-delphi.github.io/epidatr/articles/migration-guide.html&gt;) for the V5</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;   endpoints and how to move to them. Old data will remain available for at least a</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt;   year, but new ingestion will end.</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; This warning is displayed once every 8 hours.</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="fu">head</span>(old)</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 15</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; 1 ca        pct_ed_vi… nssp   state    week      2024-09-29        NA 2026-09-13</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; 2 pa        pct_ed_vi… nssp   state    week      2024-09-29        NA 2026-09-13</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; 3 ca        pct_ed_vi… nssp   state    week      2024-10-06        NA 2026-09-13</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; 4 pa        pct_ed_vi… nssp   state    week      2024-10-06        NA 2026-09-13</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;dbl&gt;, missing_value &lt;dbl&gt;, missing_stderr &lt;dbl&gt;,</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;dbl&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
 </details>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>new <span class="ot">&lt;-</span> <span class="fu">epidata_snapshot</span>(</span>
@@ -609,61 +747,164 @@ data looked on January 1, 2025:</p>
 <span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; 2 pct_ed_visits… 2024-12-27  state    ca        source      2024-10-12     0.140</span></span>
 <span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; 3 pct_ed_visits… 2024-12-27  state    ca        source      2024-10-19     0.160</span></span>
 <span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; 4 pct_ed_visits… 2024-12-27  state    ca        source      2024-10-26     0.200</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; 5 pct_ed_visits… 2024-12-27  state    ca        source      2024-11-02     0.25 </span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; 6 pct_ed_visits… 2024-12-27  state    ca        source      2024-11-09     0.310</span></span></code></pre></div>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span></code></pre></div>
 </details>
+<p>Both queries return the same signal, just with renamed and reshaped
+columns:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">names</span>(old)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;geo_value&quot; &quot;signal&quot;    &quot;source&quot;    &quot;geo_type&quot; </span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 11 entries ]</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">names</span>(new)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;signal&quot;      &quot;report_time&quot; &quot;geo_type&quot;    &quot;geo_value&quot;  </span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 3 entries ]</span></span></code></pre></div>
+</details>
+</div>
+<div id="v3-query-example-fluview" class="section level3">
+<h3>V3 query example: FluView</h3>
+<p>For V3 endpoints like <code>pub_fluview()</code>, metric names that
+used to be separate columns (such as <code>num_ili</code>,
+<code>ili</code>, <code>wili</code>) become individual signal names
+queried via <code>signals</code>, and results are standardized into the
+single <code>value</code> column:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>old_flu <span class="ot">&lt;-</span> <span class="fu">pub_fluview</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">regions =</span> <span class="st">&quot;nat&quot;</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">epiweeks =</span> <span class="fu">epirange</span>(<span class="dv">202440</span>, <span class="dv">202445</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; Warning: `pub_fluview()` uses the V4 Epidata API.</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; ℹ Starting in October 2026, V4 is tentatively deprecated in favor of the V5 API.</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; ℹ See `vignette(&quot;migration-guide&quot;)` (or</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt;   &lt;https://cmu-delphi.github.io/epidatr/articles/migration-guide.html&gt;) for the V5</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt;   endpoints and how to move to them. Old data will remain available for at least a</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt;   year, but new ingestion will end.</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; This warning is displayed once every 8 hours.</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="fu">head</span>(old_flu[, <span class="fu">c</span>(<span class="st">&quot;release_date&quot;</span>, <span class="st">&quot;region&quot;</span>, <span class="st">&quot;epiweek&quot;</span>, <span class="st">&quot;wili&quot;</span>, <span class="st">&quot;ili&quot;</span>)])</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 5</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt;   release_date region epiweek     wili   ili</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt;   &lt;date&gt;       &lt;chr&gt;  &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; 1 2026-09-18   nat    2024-09-29  1.91  1.85</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; 2 2026-09-18   nat    2024-10-06  2.02  1.94</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; 3 2026-09-18   nat    2024-10-13  2.07  2.01</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; 4 2026-09-18   nat    2024-10-20  2.22  2.16</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span></code></pre></div>
+</details>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>new_flu <span class="ot">&lt;-</span> <span class="fu">epidata_snapshot</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;fluview_ilinet&quot;</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">signals =</span> <span class="st">&quot;wili&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">geo_type =</span> <span class="st">&quot;nation&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;us&quot;</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">reference_time =</span> <span class="fu">epirange</span>(<span class="st">&quot;2024-10-01&quot;</span>, <span class="st">&quot;2024-11-15&quot;</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="fu">head</span>(new_flu)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 7</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt;   signal report_time geo_type geo_value fill_method reference_time value</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;  &lt;date&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;       &lt;date&gt;         &lt;dbl&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; 1 wili   2025-09-12  nation   us        source      2024-10-12      2.02</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; 2 wili   2025-09-12  nation   us        source      2024-10-19      2.07</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; 3 wili   2025-09-12  nation   us        source      2024-10-26      2.22</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; 4 wili   2025-09-12  nation   us        source      2024-11-02      2.32</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span></code></pre></div>
+</details>
+</div>
 </div>
 <div id="revision-history-queries" class="section level2">
 <h2>Revision history queries</h2>
-<p>Where you used to pass <code>issues</code> to
-<code>pub_covidcast()</code>, use <code>epidata_archive()</code> with
-<code>report_time</code>:</p>
+<p>Where you pass <code>issues</code> to <code>pub_covidcast()</code>,
+use <code>epidata_archive()</code> with <code>report_time</code>:</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>revisions <span class="ot">&lt;-</span> <span class="fu">epidata_archive</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nssp&quot;</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">signals =</span> <span class="st">&quot;pct_ed_visits_influenza&quot;</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;pa&quot;</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">reference_time =</span> <span class="fu">epirange</span>(<span class="st">&quot;2024-10-01&quot;</span>, <span class="st">&quot;2025-01-01&quot;</span>),</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">report_time =</span> <span class="st">&quot;&lt;2025-06-01&quot;</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>)</span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="fu">head</span>(revisions)</span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 7</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;   signal        report_time geo_type geo_value fill_method reference_time  value</span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;         &lt;date&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;       &lt;date&gt;          &lt;dbl&gt;</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; 1 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-05     0.0500</span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 2 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-12     0.0700</span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; 3 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-19     0.0800</span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; 4 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-26     0.130 </span></span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; 5 pct_ed_visit… 2024-11-08  state    pa        source      2024-11-02     0.140 </span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; 6 pct_ed_visit… 2024-11-23  state    pa        source      2024-10-05     0.0500</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>old_revisions <span class="ot">&lt;-</span> <span class="fu">pub_covidcast</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nssp&quot;</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">signals =</span> <span class="st">&quot;pct_ed_visits_influenza&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="at">time_type =</span> <span class="st">&quot;week&quot;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;pa&quot;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">time_values =</span> <span class="fu">epirange</span>(<span class="dv">202440</span>, <span class="dv">202501</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="at">issues =</span> <span class="fu">epirange</span>(<span class="dv">202440</span>, <span class="dv">202522</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>)</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="fu">head</span>(old_revisions)</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 15</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt;   geo_value signal     source geo_type time_type time_value direction issue     </span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;date&gt;         &lt;dbl&gt; &lt;date&gt;    </span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; 1 pa        pct_ed_vi… nssp   state    week      2024-09-29        NA 2024-11-03</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; 2 pa        pct_ed_vi… nssp   state    week      2024-09-29        NA 2024-11-10</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; 3 pa        pct_ed_vi… nssp   state    week      2024-09-29        NA 2024-11-17</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; 4 pa        pct_ed_vi… nssp   state    week      2024-09-29        NA 2024-11-24</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; # ℹ 7 more variables: lag &lt;dbl&gt;, missing_value &lt;dbl&gt;, missing_stderr &lt;dbl&gt;,</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; #   missing_sample_size &lt;dbl&gt;, value &lt;dbl&gt;, stderr &lt;dbl&gt;, sample_size &lt;dbl&gt;</span></span></code></pre></div>
 </details>
-<p>If you filtered by <code>lag</code>, fetch the archive and filter
-afterwards:</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>revisions[revisions<span class="sc">$</span>report_time <span class="sc">-</span> revisions<span class="sc">$</span>reference_time <span class="sc">&lt;=</span> <span class="dv">7</span>, ]</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>revisions <span class="ot">&lt;-</span> <span class="fu">epidata_archive</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nssp&quot;</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">signals =</span> <span class="st">&quot;pct_ed_visits_influenza&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">geo_type =</span> <span class="st">&quot;state&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">geo_values =</span> <span class="st">&quot;pa&quot;</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="at">reference_time =</span> <span class="fu">epirange</span>(<span class="st">&quot;2024-10-01&quot;</span>, <span class="st">&quot;2025-01-01&quot;</span>),</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="at">report_time =</span> <span class="st">&quot;&lt;2025-06-01&quot;</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>)</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="fu">head</span>(revisions)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 7</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt;   signal        report_time geo_type geo_value fill_method reference_time  value</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;         &lt;date&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;       &lt;date&gt;          &lt;dbl&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; 1 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-05     0.0500</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; 2 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-12     0.0700</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; 3 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-19     0.0800</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; 4 pct_ed_visit… 2024-11-08  state    pa        source      2024-10-26     0.130 </span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span></code></pre></div>
+</details>
+<p><a id="lag"></a></p>
+<p>If you filtered by <code>lag</code>, fetch the archive with
+<code>epidata_archive()</code> and filter afterwards:</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># For an exact lag (e.g., 7 days):</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>revisions <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">as.integer</span>(report_time <span class="sc">-</span> reference_time) <span class="sc">==</span> <span class="dv">7</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co"># Or for maximum latency (e.g., at most 7 days of delay):</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>revisions <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">as.integer</span>(report_time <span class="sc">-</span> reference_time) <span class="sc">&lt;=</span> <span class="dv">7</span>)</span></code></pre></div>
 </details>
 </div>
-<div id="checking-whether-a-source-has-moved" class="section level2">
-<h2>Checking whether a source has moved</h2>
+<div id="checking-whether-a-source-is-available" class="section level2">
+<h2>Checking whether a source is available</h2>
 <p>Use <code>epidata_meta()</code> to see what a source offers in the
 new API. It returns signals, geo types, and the available
 <code>reference_time</code> and <code>report_time</code> ranges:</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">epidata_meta</span>(<span class="at">source =</span> <span class="st">&quot;nssp&quot;</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>meta<span class="sc">$</span>nssp<span class="sc">$</span>signals</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;pct_ed_visits_ari&quot;                &quot;pct_ed_visits_combined&quot;          </span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; [3] &quot;pct_ed_visits_covid&quot;              &quot;pct_ed_visits_influenza&quot;         </span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; [5] &quot;pct_ed_visits_rsv&quot;                &quot;smoothed_pct_ed_visits_combined&quot; </span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; [7] &quot;smoothed_pct_ed_visits_covid&quot;     &quot;smoothed_pct_ed_visits_influenza&quot;</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; [9] &quot;smoothed_pct_ed_visits_rsv&quot;</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>meta<span class="sc">$</span>nssp<span class="sc">$</span>time_value_range</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">epidata_meta</span>(<span class="at">source =</span> <span class="st">&quot;nssp&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co"># all the fields available for this source</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="fu">names</span>(meta)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;report_time_range&quot;    &quot;reference_time_range&quot; &quot;signals&quot;             </span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; [4] &quot;geo_types&quot;           </span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt;  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 4 entries ]</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>meta<span class="sc">$</span>signals <span class="co"># available signal names</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt; [1] &quot;pct_ed_visits_ari&quot;       &quot;pct_ed_visits_combined&quot; </span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt; [3] &quot;pct_ed_visits_covid&quot;     &quot;pct_ed_visits_influenza&quot;</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt;  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 5 entries ]</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>meta<span class="sc">$</span>geo_types <span class="co"># supported geography levels</span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; [1] &quot;census_division&quot; &quot;census_region&quot;   &quot;county&quot;          &quot;hhs&quot;            </span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt;  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 5 entries ]</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a>meta<span class="sc">$</span>reference_time_range <span class="co"># earliest/latest reference_time available</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt; $latest</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2026-09-12&quot;</span></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="co">#&gt; $first</span></span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2022-10-01&quot;</span></span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>meta<span class="sc">$</span>report_time_range <span class="co"># earliest/latest report_time (publication date) available</span></span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a><span class="co">#&gt; $latest</span></span>
+<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2026-09-16T00:00:00&quot;</span></span>
+<span id="cb11-25"><a href="#cb11-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-26"><a href="#cb11-26" tabindex="-1"></a><span class="co">#&gt; $first</span></span>
+<span id="cb11-27"><a href="#cb11-27" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2024-04-18T00:00:00&quot;</span></span></code></pre></div>
 </details>
 <p>If <code>epidata_meta()</code> does not know the source yet, keep
 using <code>pub_covidcast()</code> (or the relevant
 <code>{pub/pvt}_*</code> function) for it and check back after package
-updates. The <a href="http://lists.andrew.cmu.edu/mailman/listinfo/delphi-covidcast-api">API
+updates. The <a href="https://lists.andrew.cmu.edu/mailman/listinfo/delphi-covidcast-api">API
 mailing list</a> announces sources as they move.</p>
 </div>
 <div id="endpoints-kept-for-historical-reference" class="section level2">
